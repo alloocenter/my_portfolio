@@ -1,0 +1,654 @@
+---
+/**
+ * Mockups d'interfaces métier haute-fidélité (7 projets) — lisibles en 1 seconde
+ * par un recruteur non-technique (RH, manager, client) : zéro schéma réseau cryptique,
+ * uniquement des écrans applicatifs reconnaissables aux couleurs du Grand Livre.
+ */
+import type { ProjectVisualKind } from '../data/projects';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  kind: ProjectVisualKind;
+  lang: Lang;
+  size?: 'card' | 'wide';
+}
+const { kind, lang, size = 'card' } = Astro.props;
+const fr = lang === 'fr';
+---
+
+<div class:list={['pmock', `pmock--${size}`]} aria-hidden="true">
+  {/* 01 — PAIEMENTS NUMÉRIQUES & INTEROPÉRABILITÉ (PHARE PLEINE LARGEUR) */}
+  {
+    kind === 'payments' && (
+      <svg class="pmock__svg" viewBox="0 0 880 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Fenêtre navigateur principale */}
+        <rect x="18" y="18" width="668" height="384" rx="10" class="m-win" />
+        <path d="M18 28 C18 22.5 22.5 18 28 18 H676 C681.5 18 686 22.5 686 28 V52 H18 Z" class="m-bar" />
+        <circle cx="38" cy="35" r="4.5" class="m-dot-accent" />
+        <circle cx="54" cy="35" r="4.5" class="m-dot" />
+        <circle cx="70" cy="35" r="4.5" class="m-dot" />
+        <text x="96" y="39" class="m-mono m-muted" font-size="11">
+          {fr ? 'Portail opérations · Paiements interopérables' : 'Operations portal · Interoperable payments'}
+        </text>
+        <rect x="576" y="26" width="92" height="18" rx="9" class="m-pill-ok" />
+        <text x="622" y="38.5" text-anchor="middle" class="m-mono m-ok" font-size="9.5">
+          {fr ? '● EN LIGNE' : '● LIVE'}
+        </text>
+
+        {/* Cartes KPI lisibles */}
+        <g transform="translate(38 72)">
+          <rect width="196" height="74" rx="6" class="m-card" />
+          <text x="16" y="25" class="m-muted" font-size="11">{fr ? 'Taux de succès' : 'Success rate'}</text>
+          <text x="16" y="54" class="m-title" font-size="24">99,98 %</text>
+          <text x="128" y="53" class="m-mono m-ok" font-size="10.5">+0,4 %</text>
+        </g>
+        <g transform="translate(250 72)">
+          <rect width="196" height="74" rx="6" class="m-card m-card--accent" />
+          <text x="16" y="25" class="m-muted" font-size="11">{fr ? 'Partenaires reliés' : 'Linked partners'}</text>
+          <text x="16" y="54" class="m-title" font-size="24">4 {fr ? 'réseaux' : 'networks'}</text>
+        </g>
+        <g transform="translate(462 72)">
+          <rect width="204" height="74" rx="6" class="m-card" />
+          <text x="16" y="25" class="m-muted" font-size="11">{fr ? 'Suivi des alertes' : 'Alert tracking'}</text>
+          <text x="16" y="54" class="m-title" font-size="22">{fr ? 'Temps réel' : 'Real-time'}</text>
+        </g>
+
+        {/* Liste des transactions récentes */}
+        <g transform="translate(38 166)">
+          <rect width="628" height="214" rx="6" class="m-card" />
+          <text x="18" y="28" class="m-mono m-muted" font-size="10.5">
+            {fr ? 'OPÉRATIONS RÉCENTES — TRAÇABILITÉ COMPLÈTE' : 'RECENT OPERATIONS — END-TO-END TRACEABILITY'}
+          </text>
+          <line x1="18" y1="42" x2="610" y2="42" class="m-rule" />
+
+          {[
+            {
+              y: 56,
+              label: fr ? 'Virement partenaire · Réseau A → B' : 'Partner transfer · Network A → B',
+              time: fr ? 'À l’instant' : 'Just now',
+              status: fr ? 'Validé ✓' : 'Cleared ✓',
+              hi: true,
+            },
+            {
+              y: 106,
+              label: fr ? 'Paiement mobile marchand · Abidjan' : 'Merchant mobile payment · Abidjan',
+              time: fr ? 'Il y a 1 min' : '1 min ago',
+              status: fr ? 'Confirmé ✓' : 'Confirmed ✓',
+              hi: false,
+            },
+            {
+              y: 156,
+              label: fr ? 'Notification de règlement client' : 'Customer settlement notification',
+              time: fr ? 'Il y a 3 min' : '3 min ago',
+              status: fr ? 'Reçue ✓' : 'Delivered ✓',
+              hi: false,
+            },
+          ].map((row) => (
+            <g transform={`translate(18 ${row.y})`}>
+              <rect width="592" height="38" rx="5" class={row.hi ? 'm-row m-row--hi pmock__focus' : 'm-row'} />
+              <circle cx="18" cy="19" r="5" class={row.hi ? 'm-dot-accent' : 'm-dot-ok'} />
+              <text x="34" y="23" class="m-fg" font-size="13">{row.label}</text>
+              <text x="430" y="23" class="m-muted" font-size="11.5">{row.time}</text>
+              <rect x="500" y="9" width="80" height="20" rx="10" class="m-pill-ok" />
+              <text x="540" y="22.5" text-anchor="middle" class="m-mono m-ok" font-size="10">{row.status}</text>
+            </g>
+          ))}
+        </g>
+
+        {/* Smartphone terrain à droite */}
+        <g transform="translate(650 74)" class="pmock__float">
+          <rect width="212" height="328" rx="24" class="m-phone" />
+          <rect x="78" y="14" width="56" height="5" rx="2.5" class="m-dot" />
+          <text x="106" y="48" text-anchor="middle" class="m-mono m-muted" font-size="9.5">
+            {fr ? 'APP MOBILE TERRAIN' : 'MOBILE FIELD APP'}
+          </text>
+          <circle cx="106" cy="110" r="32" class="m-circle-accent" />
+          <path d="M93 110 L102 119 L120 100" stroke="#141311" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+          <text x="106" y="168" text-anchor="middle" class="m-title" font-size="16">
+            {fr ? 'Paiement validé' : 'Payment cleared'}
+          </text>
+          <text x="106" y="189" text-anchor="middle" class="m-muted" font-size="11.5">
+            {fr ? 'Confirmé en temps réel' : 'Confirmed in real time'}
+          </text>
+          <rect x="22" y="214" width="168" height="44" rx="6" class="m-card" />
+          <text x="34" y="233" class="m-muted" font-size="9.5">{fr ? 'Partenaire' : 'Partner'}</text>
+          <text x="34" y="249" class="m-fg" font-size="11.5">{fr ? 'Réseau interopérable' : 'Interoperable hub'}</text>
+          <rect x="22" y="272" width="168" height="34" rx="17" class="m-btn-accent" />
+          <text x="106" y="293" text-anchor="middle" class="m-btn-txt" font-size="11.5">
+            {fr ? 'Reçu transmis ✓' : 'Receipt sent ✓'}
+          </text>
+        </g>
+      </svg>
+    )
+  }
+
+  {/* 02 — PORTAIL RH DOUANE MALIENNE */}
+  {
+    kind === 'hr' && (
+      <svg class="pmock__svg" viewBox="0 0 600 375" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="14" width="572" height="347" rx="10" class="m-win" />
+        <path d="M14 24 C14 18.5 18.5 14 24 14 H576 C581.5 14 586 18.5 586 24 V44 H14 Z" class="m-bar" />
+        <circle cx="32" cy="29" r="4" class="m-dot-accent" />
+        <circle cx="46" cy="29" r="4" class="m-dot" />
+        <circle cx="60" cy="29" r="4" class="m-dot" />
+        <text x="82" y="33" class="m-mono m-muted" font-size="10">
+          {fr ? 'Portail RH · Douane malienne' : 'HR Portal · Malian Customs'}
+        </text>
+
+        {/* Sidebar modules RH */}
+        <rect x="14" y="44" width="136" height="317" class="m-sidebar" />
+        {(fr
+          ? ['Agents', 'Carrières', 'Congés', 'Mobilité', 'Formations', 'Journal d’audit']
+          : ['Staff', 'Careers', 'Leave', 'Transfers', 'Training', 'Audit log']
+        ).map((item, i) => (
+          <g transform={`translate(24 ${62 + i * 36})`}>
+            <rect width="114" height="28" rx="4" class={i === 0 ? 'm-nav-active' : 'm-nav'} />
+            <text x="12" y="18" class={i === 0 ? 'm-accent' : 'm-muted'} font-size="11.5">{item}</text>
+          </g>
+        ))}
+
+        {/* KPIs RH */}
+        <g transform="translate(168 62)">
+          <rect width="194" height="68" rx="6" class="m-card" />
+          <text x="14" y="24" class="m-muted" font-size="10.5">{fr ? 'Espaces centralisés' : 'Centralised spaces'}</text>
+          <text x="14" y="51" class="m-title" font-size="22">12 {fr ? 'modules' : 'modules'}</text>
+        </g>
+        <g transform="translate(374 62)">
+          <rect width="194" height="68" rx="6" class="m-card m-card--accent" />
+          <text x="14" y="24" class="m-muted" font-size="10.5">{fr ? 'Suivi des dossiers' : 'Record tracking'}</text>
+          <text x="14" y="51" class="m-title" font-size="20">{fr ? '100 % tracé' : '100% audited'}</text>
+        </g>
+
+        {/* Fiches agents */}
+        <g transform="translate(168 148)">
+          <rect width="400" height="196" rx="6" class="m-card" />
+          <text x="16" y="26" class="m-mono m-muted" font-size="10">
+            {fr ? 'SUIVI DES AGENTS & DEMANDES' : 'STAFF RECORDS & REQUESTS'}
+          </text>
+          <line x1="16" y1="38" x2="384" y2="38" class="m-rule" />
+          {[
+            { y: 52, n: 'M. Traoré', role: fr ? 'Demande de congé' : 'Leave request', st: fr ? 'Validé' : 'Approved', ok: true },
+            { y: 98, n: 'A. Diallo', role: fr ? 'Mobilité · Bamako' : 'Transfer · Bamako', st: fr ? 'En cours' : 'Active', ok: false },
+            { y: 144, n: 'F. Coulibaly', role: fr ? 'Formation certifiée' : 'Certified training', st: fr ? 'Terminée' : 'Completed', ok: true },
+          ].map((r, idx) => (
+            <g transform={`translate(16 ${r.y})`}>
+              <rect width="368" height="36" rx="5" class={idx === 0 ? 'm-row m-row--hi pmock__focus' : 'm-row'} />
+              <circle cx="18" cy="18" r="10" class="m-avatar" />
+              <text x="18" y="21.5" text-anchor="middle" class="m-mono m-fg" font-size="9">{r.n[0]}</text>
+              <text x="38" y="16" class="m-fg" font-size="11.5" font-weight="600">{r.n}</text>
+              <text x="38" y="29" class="m-muted" font-size="10">{r.role}</text>
+              <rect x="284" y="8" width="72" height="20" rx="10" class={r.ok ? 'm-pill-ok' : 'm-pill-accent'} />
+              <text x="320" y="21.5" text-anchor="middle" class={r.ok ? 'm-mono m-ok' : 'm-mono m-accent'} font-size="9.5">
+                {r.st}
+              </text>
+            </g>
+          ))}
+        </g>
+      </svg>
+    )
+  }
+
+  {/* 03 — PLATEFORME E-LEARNING ORANGE DIGITAL CENTER */}
+  {
+    kind === 'learning' && (
+      <svg class="pmock__svg" viewBox="0 0 600 375" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="14" width="572" height="347" rx="10" class="m-win" />
+        <path d="M14 24 C14 18.5 18.5 14 24 14 H576 C581.5 14 586 18.5 586 24 V44 H14 Z" class="m-bar" />
+        <circle cx="32" cy="29" r="4" class="m-dot-accent" />
+        <circle cx="46" cy="29" r="4" class="m-dot" />
+        <circle cx="60" cy="29" r="4" class="m-dot" />
+        <text x="82" y="33" class="m-mono m-muted" font-size="10">
+          {fr ? 'Espace formation · Orange Digital Center' : 'Learning Hub · Orange Digital Center'}
+        </text>
+
+        {/* Sélecteur de profils cloisonnés */}
+        <g transform="translate(32 62)">
+          {[
+            { x: 0, label: fr ? 'Apprenant' : 'Learner', active: true },
+            { x: 112, label: fr ? 'Formateur' : 'Trainer', active: false },
+            { x: 224, label: fr ? 'Administrateur' : 'Admin', active: false },
+          ].map((tab) => (
+            <g transform={`translate(${tab.x} 0)`}>
+              <rect width="102" height="26" rx="13" class={tab.active ? 'm-pill-accent' : 'm-row'} />
+              <text x="51" y="17" text-anchor="middle" class={tab.active ? 'm-mono m-accent' : 'm-mono m-muted'} font-size="10">
+                {tab.label}
+              </text>
+            </g>
+          ))}
+        </g>
+
+        {/* Carte cours en cours (gauche) */}
+        <g transform="translate(32 104)" class="pmock__focus">
+          <rect width="318" height="236" rx="8" class="m-card m-card--accent" />
+          <rect x="16" y="16" width="286" height="122" rx="6" class="m-video" />
+          <circle cx="159" cy="77" r="24" class="m-circle-accent" />
+          <polygon points="153,67 171,77 153,87" fill="#141311" />
+          <text x="16" y="162" class="m-title" font-size="15">
+            {fr ? 'Parcours Développement Web' : 'Web Development Track'}
+          </text>
+          <text x="16" y="182" class="m-muted" font-size="11">
+            {fr ? 'Module 4 sur 5 · Certificat inclus' : 'Module 4 of 5 · Certificate included'}
+          </text>
+          {/* Barre de progression apprenant */}
+          <rect x="16" y="200" width="286" height="8" rx="4" class="m-track" />
+          <rect x="16" y="200" width="224" height="8" rx="4" class="m-fill-accent" />
+          <text x="266" y="224" class="m-mono m-accent" font-size="10.5">78 %</text>
+        </g>
+
+        {/* Liste des leçons à droite */}
+        <g transform="translate(366 104)">
+          <rect width="202" height="236" rx="8" class="m-card" />
+          <text x="16" y="28" class="m-mono m-muted" font-size="10">{fr ? 'PROGRAMME' : 'CURRICULUM'}</text>
+          {[
+            { y: 46, t: fr ? '01 · Prise en main' : '01 · Getting started', done: true },
+            { y: 90, t: fr ? '02 · Cas pratiques' : '02 · Guided practice', done: true },
+            { y: 134, t: fr ? '03 · Projet équipe' : '03 · Team project', done: true },
+            { y: 178, t: fr ? '04 · Évaluation' : '04 · Final review', done: false },
+          ].map((m) => (
+            <g transform={`translate(14 ${m.y})`}>
+              <rect width="174" height="34" rx="5" class="m-row" />
+              <circle cx="16" cy="17" r="7" class={m.done ? 'm-pill-ok' : 'm-pill-accent'} />
+              <text x="16" y="20" text-anchor="middle" class={m.done ? 'm-ok' : 'm-accent'} font-size="9">
+                {m.done ? '✓' : '•'}
+              </text>
+              <text x="32" y="21" class="m-fg" font-size="11">{m.t}</text>
+            </g>
+          ))}
+        </g>
+      </svg>
+    )
+  }
+
+  {/* 04 — GESTION DE STOCKS & ALERTES RUPTURE */}
+  {
+    kind === 'inventory' && (
+      <svg class="pmock__svg" viewBox="0 0 600 375" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="14" width="572" height="347" rx="10" class="m-win" />
+        <path d="M14 24 C14 18.5 18.5 14 24 14 H576 C581.5 14 586 18.5 586 24 V44 H14 Z" class="m-bar" />
+        <circle cx="32" cy="29" r="4" class="m-dot-accent" />
+        <circle cx="46" cy="29" r="4" class="m-dot" />
+        <circle cx="60" cy="29" r="4" class="m-dot" />
+        <text x="82" y="33" class="m-mono m-muted" font-size="10">
+          {fr ? 'Inventaire & Réapprovisionnement' : 'Inventory & Restocking'}
+        </text>
+
+        {/* Courbe de stock + alerte visuelle */}
+        <g transform="translate(32 62)">
+          <rect width="536" height="170" rx="8" class="m-card" />
+          <text x="18" y="28" class="m-title" font-size="14">
+            {fr ? 'Évolution du stock en direct' : 'Live stock level monitoring'}
+          </text>
+          <rect x="358" y="13" width="160" height="22" rx="11" class="m-pill-accent pmock__focus" />
+          <text x="438" y="27.5" text-anchor="middle" class="m-mono m-accent" font-size="9.5">
+            {fr ? '! SEUIL BAS DÉTECTÉ' : '! LOW STOCK ALERT'}
+          </text>
+
+          {/* Ligne de seuil */}
+          <line x1="20" y1="126" x2="516" y2="126" stroke="#f08080" stroke-dasharray="5 4" stroke-width="1.2" opacity="0.85" />
+          <text x="22" y="120" class="m-mono m-accent" font-size="9">
+            {fr ? 'SEUIL D’ALERTE' : 'ALERT THRESHOLD'}
+          </text>
+
+          <polyline
+            points="24,66 96,74 168,60 240,94 312,110 384,138 452,96 512,72"
+            stroke="#efeae0"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+          />
+          <circle cx="384" cy="138" r="6" fill="#f08080" />
+          <circle cx="384" cy="138" r="12" fill="#f08080" fill-opacity="0.22" />
+        </g>
+
+        {/* Liste produits */}
+        <g transform="translate(32 246)">
+          <rect width="260" height="96" rx="8" class="m-card m-card--accent" />
+          <text x="16" y="28" class="m-mono m-accent" font-size="9.5">{fr ? 'À COMMANDER' : 'REORDER NOW'}</text>
+          <text x="16" y="54" class="m-title" font-size="14">{fr ? 'Cartouches & fournitures' : 'Office & warehouse items'}</text>
+          <text x="16" y="76" class="m-muted" font-size="11">{fr ? 'Bon fournisseur prêt en 1 clic' : 'Supplier order ready in 1 click'}</text>
+        </g>
+        <g transform="translate(308 246)">
+          <rect width="260" height="96" rx="8" class="m-card" />
+          <text x="16" y="28" class="m-mono m-ok" font-size="9.5">{fr ? 'STOCK SAIN' : 'HEALTHY STOCK'}</text>
+          <text x="16" y="54" class="m-title" font-size="14">{fr ? '142 références suivies' : '142 tracked SKUs'}</text>
+          <text x="16" y="76" class="m-muted" font-size="11">{fr ? 'Dernier audit vérifié aujourd’hui' : 'Latest audit verified today'}</text>
+        </g>
+      </svg>
+    )
+  }
+
+  {/* 05 — MESSAGERIE INSTANTANÉE SÉCURISÉE */}
+  {
+    kind === 'messaging' && (
+      <svg class="pmock__svg" viewBox="0 0 600 375" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="14" width="572" height="347" rx="10" class="m-win" />
+        <path d="M14 24 C14 18.5 18.5 14 24 14 H576 C581.5 14 586 18.5 586 24 V44 H14 Z" class="m-bar" />
+        <circle cx="32" cy="29" r="4" class="m-dot-accent" />
+        <circle cx="46" cy="29" r="4" class="m-dot" />
+        <circle cx="60" cy="29" r="4" class="m-dot" />
+        <text x="82" y="33" class="m-mono m-muted" font-size="10">
+          {fr ? 'Messagerie sécurisée · Temps réel' : 'Secure Messaging · Real-time'}
+        </text>
+        <rect x="444" y="20" width="128" height="18" rx="9" class="m-pill-ok" />
+        <text x="508" y="32.5" text-anchor="middle" class="m-mono m-ok" font-size="9">
+          {fr ? 'ACCÈS VÉRIFIÉ ✓' : 'VERIFIED ACCESS ✓'}
+        </text>
+
+        {/* Liste conversations gauche */}
+        <rect x="14" y="44" width="166" height="317" class="m-sidebar" />
+        {[
+          { y: 60, n: fr ? 'Équipe Produit' : 'Product Team', msg: fr ? 'Rapport reçu !' : 'Report received!', on: true },
+          { y: 120, n: 'S. Koné', msg: fr ? 'OK pour demain' : 'Ready for tomorrow', on: false },
+          { y: 180, n: fr ? 'Support Client' : 'Client Support', msg: fr ? 'Dossier validé' : 'Ticket resolved', on: false },
+        ].map((c) => (
+          <g transform={`translate(24 ${c.y})`}>
+            <rect width="146" height="48" rx="6" class={c.on ? 'm-nav-active' : 'm-row'} />
+            <circle cx="20" cy="24" r="11" class={c.on ? 'm-circle-accent' : 'm-avatar'} />
+            <text x="38" y="21" class="m-fg" font-size="11" font-weight="600">{c.n}</text>
+            <text x="38" y="36" class="m-muted" font-size="9.5">{c.msg}</text>
+          </g>
+        ))}
+
+        {/* Bulles de conversation droite */}
+        <g transform="translate(200 66)">
+          <rect x="0" y="0" width="236" height="48" rx="10" class="m-card" />
+          <text x="14" y="21" class="m-fg" font-size="11.5">{fr ? 'Peux-tu partager le bilan ?' : 'Can you share the summary?'}</text>
+          <text x="14" y="37" class="m-muted" font-size="9.5">09:41</text>
+
+          <g transform="translate(110 66)" class="pmock__focus">
+            <rect x="0" y="0" width="254" height="82" rx="10" class="m-bubble-accent" />
+            <rect x="12" y="12" width="230" height="34" rx="5" fill="rgba(20,19,17,0.22)" />
+            <text x="24" y="33" fill="#141311" font-size="11" font-weight="600">
+              {fr ? 'Bilan_Trimestre.pdf · 1,4 Mo' : 'Quarterly_Report.pdf · 1.4 MB'}
+            </text>
+            <text x="14" y="66" fill="#141311" font-size="11">
+              {fr ? 'Envoyé à l’instant ✓✓' : 'Sent just now ✓✓'}
+            </text>
+          </g>
+
+          <rect x="0" y="168" width="218" height="44" rx="10" class="m-card" />
+          <text x="14" y="194" class="m-fg" font-size="11.5">{fr ? 'Parfait, bien reçu merci !' : 'Great, got it — thanks!'}</text>
+
+          {/* Barre de saisie */}
+          <rect x="0" y="238" width="364" height="38" rx="19" class="m-row" />
+          <text x="18" y="261" class="m-muted" font-size="11">{fr ? 'Écrire un message…' : 'Type a message…'}</text>
+          <circle cx="344" cy="257" r="13" class="m-circle-accent" />
+          <text x="344" y="261" text-anchor="middle" fill="#141311" font-size="12" font-weight="700">→</text>
+        </g>
+      </svg>
+    )
+  }
+
+  {/* 06 — SUIVI DES NOTIFICATIONS FINANCIÈRES */}
+  {
+    kind === 'notifications' && (
+      <svg class="pmock__svg" viewBox="0 0 600 375" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="14" width="572" height="347" rx="10" class="m-win" />
+        <path d="M14 24 C14 18.5 18.5 14 24 14 H576 C581.5 14 586 18.5 586 24 V44 H14 Z" class="m-bar" />
+        <circle cx="32" cy="29" r="4" class="m-dot-accent" />
+        <circle cx="46" cy="29" r="4" class="m-dot" />
+        <circle cx="60" cy="29" r="4" class="m-dot" />
+        <text x="82" y="33" class="m-mono m-muted" font-size="10">
+          {fr ? 'Supervision des notifications · MediaSoft' : 'Notification Monitor · MediaSoft'}
+        </text>
+
+        {/* En-tête statut global */}
+        <g transform="translate(32 62)">
+          <rect width="536" height="58" rx="8" class="m-card" />
+          <circle cx="26" cy="29" r="7" class="m-dot-ok" />
+          <text x="44" y="26" class="m-title" font-size="14">
+            {fr ? 'Tous les canaux partenaires répondent' : 'All partner channels healthy'}
+          </text>
+          <text x="44" y="44" class="m-muted" font-size="11">
+            {fr ? 'Temps moyen de livraison : 120 ms' : 'Average delivery time: 120 ms'}
+          </text>
+          <rect x="434" y="18" width="86" height="22" rx="11" class="m-pill-ok" />
+          <text x="477" y="32.5" text-anchor="middle" class="m-mono m-ok" font-size="10">100 % OK</text>
+        </g>
+
+        {/* Fil d'événements corrélés */}
+        <g transform="translate(32 138)">
+          <line x1="22" y1="22" x2="22" y2="196" stroke="#f08080" stroke-width="2" stroke-opacity="0.45" />
+          {[
+            { y: 0, title: fr ? 'Ordre envoyé par Banque A' : 'Order sent by Bank A', sub: 'REF-8492 · 14:22:01', tag: fr ? 'Envoyé' : 'Sent', hi: false },
+            { y: 70, title: fr ? 'Confirmation reçue du Partenaire B' : 'Confirmation from Partner B', sub: 'REF-8492 · 14:22:01 (+0,1 s)', tag: fr ? 'Corrélé' : 'Matched', hi: true },
+            { y: 140, title: fr ? 'Client notifié (Web & Mobile)' : 'Customer notified (Web & Mobile)', sub: 'REF-8492 · 14:22:02', tag: fr ? 'Livré ✓' : 'Delivered ✓', hi: false },
+          ].map((ev) => (
+            <g transform={`translate(0 ${ev.y})`}>
+              <circle cx="22" cy="26" r="8" class={ev.hi ? 'm-circle-accent' : 'm-dot-ok'} />
+              <rect x="48" y="0" width="488" height="54" rx="8" class={ev.hi ? 'm-card m-card--accent pmock__focus' : 'm-card'} />
+              <text x="66" y="23" class="m-fg" font-size="13" font-weight="600">{ev.title}</text>
+              <text x="66" y="41" class="m-mono m-muted" font-size="10">{ev.sub}</text>
+              <rect x="442" y="16" width="78" height="22" rx="11" class={ev.hi ? 'm-pill-accent' : 'm-pill-ok'} />
+              <text x="481" y="30.5" text-anchor="middle" class={ev.hi ? 'm-mono m-accent' : 'm-mono m-ok'} font-size="9.5">
+                {ev.tag}
+              </text>
+            </g>
+          ))}
+        </g>
+      </svg>
+    )
+  }
+
+  {/* 07 — SUITE MÉTIER ALLOOCENTER (CRM + LIVRAISON + E-COMMERCE) */}
+  {
+    kind === 'suite' && (
+      <svg class="pmock__svg" viewBox="0 0 600 375" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="14" y="14" width="572" height="347" rx="10" class="m-win" />
+        <path d="M14 24 C14 18.5 18.5 14 24 14 H576 C581.5 14 586 18.5 586 24 V44 H14 Z" class="m-bar" />
+        <circle cx="32" cy="29" r="4" class="m-dot-accent" />
+        <circle cx="46" cy="29" r="4" class="m-dot" />
+        <circle cx="60" cy="29" r="4" class="m-dot" />
+        <text x="82" y="33" class="m-mono m-muted" font-size="10">
+          {fr ? 'Suite AllooCenter · 3 applications métier' : 'AllooCenter Suite · 3 business apps'}
+        </text>
+
+        {/* 1. CRM Clients */}
+        <g transform="translate(30 62)">
+          <rect width="170" height="278" rx="8" class="m-card" />
+          <text x="16" y="28" class="m-mono m-accent" font-size="9.5">01 · CRM</text>
+          <text x="16" y="50" class="m-title" font-size="15">{fr ? 'Relation client' : 'Customer CRM'}</text>
+          <rect x="16" y="70" width="138" height="46" rx="6" class="m-row" />
+          <text x="26" y="90" class="m-muted" font-size="9.5">{fr ? 'Dossiers actifs' : 'Active clients'}</text>
+          <text x="26" y="108" class="m-fg" font-size="14" font-weight="600">+24 %</text>
+          <rect x="16" y="130" width="138" height="36" rx="5" class="m-row" />
+          <text x="26" y="152" class="m-fg" font-size="10.5">{fr ? 'Suivi appels' : 'Call history'}</text>
+          <rect x="16" y="176" width="138" height="36" rx="5" class="m-row" />
+          <text x="26" y="198" class="m-fg" font-size="10.5">{fr ? 'Reporting live' : 'Live reports'}</text>
+          <rect x="16" y="222" width="138" height="36" rx="5" class="m-row" />
+          <text x="26" y="244" class="m-ok" font-size="10.5">{fr ? 'Équipes actives ✓' : 'Daily team use ✓'}</text>
+        </g>
+
+        {/* 2. Livraison */}
+        <g transform="translate(215 62)" class="pmock__focus">
+          <rect width="170" height="278" rx="8" class="m-card m-card--accent" />
+          <text x="16" y="28" class="m-mono m-accent" font-size="9.5">02 · {fr ? 'LIVRAISON' : 'DELIVERY'}</text>
+          <text x="16" y="50" class="m-title" font-size="15">{fr ? 'Suivi colis' : 'Live tracking'}</text>
+          {/* Mini carte trajet */}
+          <rect x="16" y="70" width="138" height="122" rx="6" class="m-video" />
+          <path d="M36 164 C 66 150, 74 114, 130 94" stroke="#f08080" stroke-width="2.5" stroke-dasharray="4 4" fill="none" />
+          <circle cx="36" cy="164" r="5" fill="#efeae0" />
+          <circle cx="130" cy="94" r="7" fill="#f08080" />
+          <rect x="16" y="206" width="138" height="52" rx="6" class="m-row" />
+          <text x="26" y="226" class="m-fg" font-size="11" font-weight="600">{fr ? 'En chemin' : 'On the way'}</text>
+          <text x="26" y="244" class="m-ok" font-size="10">{fr ? 'Livré en 25 min' : 'ETA 25 min'}</text>
+        </g>
+
+        {/* 3. E-commerce */}
+        <g transform="translate(400 62)">
+          <rect width="170" height="278" rx="8" class="m-card" />
+          <text x="16" y="28" class="m-mono m-accent" font-size="9.5">03 · {fr ? 'BOUTIQUE' : 'STORE'}</text>
+          <text x="16" y="50" class="m-title" font-size="15">E-commerce</text>
+          <rect x="16" y="70" width="138" height="74" rx="6" class="m-video" />
+          <rect x="52" y="88" width="66" height="38" rx="4" class="m-card m-card--accent" />
+          <text x="16" y="168" class="m-fg" font-size="12" font-weight="600">{fr ? 'Catalogue & stocks' : 'Catalogue & stock'}</text>
+          <text x="16" y="186" class="m-muted" font-size="10">{fr ? 'Paiement en ligne' : 'Online checkout'}</text>
+          <rect x="16" y="216" width="138" height="34" rx="17" class="m-btn-accent" />
+          <text x="85" y="237" text-anchor="middle" class="m-btn-txt" font-size="11">
+            {fr ? 'Commander →' : 'Checkout →'}
+          </text>
+        </g>
+      </svg>
+    )
+  }
+</div>
+
+<style>
+  .pmock {
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #100f0d;
+    border: 1px solid var(--plate-rule);
+  }
+  .pmock__svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 420ms var(--ease-out);
+  }
+
+  /* Micro-animations propres au survol de la carte parente */
+  @media (hover: hover) and (pointer: fine) {
+    :global(.pcard:hover) .pmock__svg {
+      transform: scale(1.028);
+    }
+    :global(.pcard:hover) .pmock :global(.pmock__focus) {
+      filter: brightness(1.08);
+    }
+    :global(.pcard:hover) .pmock :global(.pmock__float) {
+      transform: translate(650px, 68px);
+    }
+  }
+  .pmock :global(.pmock__float) {
+    transform: translate(650px, 74px);
+    transition: transform 420ms var(--ease-out);
+  }
+  .pmock :global(.pmock__focus) {
+    transition: filter 260ms ease;
+  }
+
+  /* Palette interne des mockups (contraste AA garanti sur fond charbon) */
+  .pmock :global(.m-win) {
+    fill: #181613;
+    stroke: rgb(239 234 224 / 0.16);
+    stroke-width: 1;
+  }
+  .pmock :global(.m-bar) {
+    fill: #201d19;
+  }
+  .pmock :global(.m-sidebar) {
+    fill: #141210;
+  }
+  .pmock :global(.m-card) {
+    fill: #1f1c18;
+    stroke: rgb(239 234 224 / 0.12);
+    stroke-width: 1;
+  }
+  .pmock :global(.m-card--accent) {
+    stroke: rgb(240 128 128 / 0.55);
+  }
+  .pmock :global(.m-row) {
+    fill: rgb(239 234 224 / 0.045);
+    stroke: rgb(239 234 224 / 0.08);
+    stroke-width: 1;
+  }
+  .pmock :global(.m-row--hi) {
+    fill: rgb(240 128 128 / 0.1);
+    stroke: rgb(240 128 128 / 0.36);
+  }
+  .pmock :global(.m-nav) {
+    fill: transparent;
+  }
+  .pmock :global(.m-nav-active) {
+    fill: rgb(240 128 128 / 0.14);
+    stroke: rgb(240 128 128 / 0.35);
+    stroke-width: 1;
+  }
+  .pmock :global(.m-phone) {
+    fill: #1d1a16;
+    stroke: rgb(239 234 224 / 0.28);
+    stroke-width: 1.5;
+  }
+  .pmock :global(.m-video) {
+    fill: #141210;
+    stroke: rgb(239 234 224 / 0.1);
+    stroke-width: 1;
+  }
+  .pmock :global(.m-track) {
+    fill: rgb(239 234 224 / 0.12);
+  }
+  .pmock :global(.m-fill-accent) {
+    fill: #f08080;
+  }
+  .pmock :global(.m-bubble-accent) {
+    fill: #f08080;
+  }
+  .pmock :global(.m-btn-accent) {
+    fill: #f08080;
+  }
+  .pmock :global(.m-btn-txt) {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    fill: #141311;
+  }
+  .pmock :global(.m-avatar) {
+    fill: rgb(239 234 224 / 0.12);
+  }
+  .pmock :global(.m-dot) {
+    fill: rgb(239 234 224 / 0.25);
+  }
+  .pmock :global(.m-dot-accent),
+  .pmock :global(.m-circle-accent) {
+    fill: #f08080;
+  }
+  .pmock :global(.m-dot-ok) {
+    fill: #67c587;
+  }
+  .pmock :global(.m-pill-ok) {
+    fill: rgb(103 197 135 / 0.15);
+    stroke: rgb(103 197 135 / 0.35);
+    stroke-width: 1;
+  }
+  .pmock :global(.m-pill-accent) {
+    fill: rgb(240 128 128 / 0.16);
+    stroke: rgb(240 128 128 / 0.45);
+    stroke-width: 1;
+  }
+  .pmock :global(.m-rule) {
+    stroke: rgb(239 234 224 / 0.1);
+    stroke-width: 1;
+  }
+  .pmock :global(.m-mono) {
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+  .pmock :global(.m-title) {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    fill: #efeae0;
+  }
+  .pmock :global(.m-fg) {
+    font-family: var(--font-sans);
+    fill: #efeae0;
+  }
+  .pmock :global(.m-muted) {
+    font-family: var(--font-sans);
+    fill: #9e968a;
+  }
+  .pmock :global(.m-ok) {
+    fill: #9be2b1;
+  }
+  .pmock :global(.m-accent) {
+    fill: #f08080;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pmock__svg,
+    .pmock :global(.pmock__float) {
+      transition: none;
+      transform: none !important;
+    }
+  }
+</style>

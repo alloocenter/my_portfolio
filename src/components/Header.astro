@@ -1,0 +1,477 @@
+---
+/**
+ * En-tête éditorial — verre dépoli translucide (Apple Design) + safe-area iOS :
+ * - Indicateur actif unique glissant 100% GPU (translate3d + scaleX)
+ * - Barre de progression de lecture 2px vermillon en bordure basse
+ * - Accès direct CV + cibles tactiles ≥ 44×44px sur écran tactile
+ */
+import Icon from './ui/Icon.astro';
+import { type Lang, useTranslations, homePath } from '../i18n/ui';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
+
+const links = [
+  { id: 'about', label: t('nav.about') },
+  { id: 'work', label: t('nav.work') },
+  { id: 'skills', label: t('nav.skills') },
+  { id: 'experience', label: t('nav.experience') },
+  { id: 'contact', label: t('nav.contact') },
+];
+---
+
+<header class="masthead" data-nav>
+  <div class="masthead__inner container">
+    <a class="masthead__brand mono" href={homePath(lang)} aria-label={t('nav.home')}>
+      {profile.name}
+    </a>
+
+    <div class="masthead__right">
+      <nav class="masthead__nav" aria-label={t('nav.primary')}>
+        <ul role="list" class="masthead__list">
+          {
+            links.map((link) => (
+              <li>
+                <a class="masthead__link" href={`#${link.id}`} data-nav-link={link.id}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <span class="masthead__indicator" data-nav-indicator aria-hidden="true"></span>
+      </nav>
+
+      <div class="masthead__controls">
+        <a class="masthead__cv mono" href={profile.cv[lang]} download data-cv-download>
+          <span>{t('nav.cv')}</span>
+          <Icon name="download" size={13} />
+        </a>
+
+        <a
+          class="masthead__ctrl mono"
+          href={homePath(otherLang)}
+          hreflang={otherLang}
+          lang={otherLang}
+          aria-label={t('lang.switch')}
+          data-astro-prefetch
+        >
+          {otherLang.toUpperCase()}
+        </a>
+
+        <button
+          type="button"
+          class="masthead__ctrl masthead__theme"
+          data-theme-toggle
+          data-label-dark={t('theme.toDark')}
+          data-label-light={t('theme.toLight')}
+          aria-label={t('theme.toDark')}
+        >
+          <Icon name="moon" size={16} class="theme-icon--dark" />
+          <Icon name="sun" size={16} class="theme-icon--light" />
+        </button>
+
+        <button
+          type="button"
+          class="masthead__burger mono"
+          aria-expanded="false"
+          aria-controls="mobile-drawer"
+          aria-label={t('nav.menu.open')}
+          data-label-open={t('nav.menu.open')}
+          data-label-close={t('nav.menu.close')}
+          data-menu-toggle
+        >
+          <span class="masthead__burger-text">Menu</span>
+          <span class="masthead__burger-bars" aria-hidden="true">
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barre de progression de lecture ultra-fine (scaleX GPU) -->
+  <div class="masthead__progress" aria-hidden="true">
+    <div class="masthead__progress-fill" data-scroll-progress></div>
+  </div>
+
+  <!-- Menu mobile plein écran -->
+  <div id="mobile-drawer" class="drawer" data-menu inert>
+    <nav class="drawer__inner container" aria-label={t('nav.primary')}>
+      <ol role="list" class="drawer__list">
+        {
+          links.map((link, i) => (
+            <li class="drawer__item">
+              <a class="drawer__link" href={`#${link.id}`} data-menu-link>
+                <span class="drawer__num mono" aria-hidden="true">0{i + 1}</span>
+                <span class="drawer__text serif">{link.label}</span>
+                <Icon name="arrow-up-right" size={20} class="drawer__arrow" />
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="drawer__foot mono">
+        <a class="ed-link" href={profile.cv[lang]} download data-cv-download>
+          {t('hero.cta.cv')}
+          <Icon name="download" size={15} />
+        </a>
+        <div class="drawer__socials">
+          <a href={profile.socials.github} target="_blank" rel="noopener noreferrer">
+            GitHub<span class="sr-only"> {t('external')}</span>
+          </a>
+          <span aria-hidden="true">·</span>
+          <a href={profile.socials.linkedin} target="_blank" rel="noopener noreferrer">
+            LinkedIn<span class="sr-only"> {t('external')}</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .masthead {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 60;
+    padding-top: env(safe-area-inset-top, 0px);
+    height: calc(var(--nav-h) + env(safe-area-inset-top, 0px));
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 240ms ease,
+      border-color 240ms ease;
+  }
+  .masthead[data-scrolled] {
+    border-bottom-color: var(--rule);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+  }
+
+  .masthead__inner {
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .masthead__brand {
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  .masthead__right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .masthead__nav {
+    position: relative;
+    display: none;
+  }
+  @media (min-width: 860px) {
+    .masthead__nav {
+      display: block;
+    }
+  }
+
+  .masthead__list {
+    display: flex;
+    align-items: center;
+    gap: 1.35rem;
+  }
+
+  .masthead__link {
+    position: relative;
+    display: inline-block;
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    padding-block: 0.45rem;
+    transition: color var(--dur-fast) ease, outline-color 150ms var(--ease-out), outline-offset 150ms var(--ease-out);
+  }
+  .masthead__link[aria-current='true'] {
+    color: var(--fg);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .masthead__link:hover {
+      color: var(--fg);
+    }
+  }
+
+  /* Indicateur actif unique qui glisse physiquement d'un lien à l'autre (100% GPU) */
+  .masthead__indicator {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    height: 1.5px;
+    background: var(--accent);
+    transform-origin: left center;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform 260ms var(--ease-out),
+      opacity 180ms ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .masthead__indicator {
+      transition: opacity 150ms ease;
+    }
+  }
+
+  /* Barre de progression de lecture */
+  .masthead__progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .masthead__progress-fill {
+    width: 100%;
+    height: 100%;
+    background: var(--brand);
+    opacity: 0.95;
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+
+  .masthead__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--rule);
+  }
+  @media (max-width: 859px) {
+    .masthead__controls {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+
+  .masthead__cv {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    height: 2rem;
+    padding-inline: 0.7rem;
+    margin-right: 0.25rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg);
+    transition:
+      border-color var(--dur-fast) ease,
+      color var(--dur-fast) ease,
+      transform var(--dur-press) var(--ease-out);
+  }
+  @media (min-width: 560px) {
+    .masthead__cv {
+      display: inline-flex;
+    }
+  }
+  .masthead__cv:active {
+    transform: scale(0.96);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .masthead__cv:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+  }
+
+  .masthead__ctrl {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding-inline: 0.45rem;
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    transition: color var(--dur-fast) ease, transform var(--dur-press) var(--ease-out);
+  }
+  .masthead__ctrl:active {
+    transform: scale(0.95);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .masthead__ctrl:hover {
+      color: var(--accent);
+    }
+  }
+
+  .masthead__theme :global(.theme-icon--light) {
+    display: none;
+  }
+  :global([data-theme='dark']) .masthead__theme :global(.theme-icon--dark) {
+    display: none;
+  }
+  :global([data-theme='dark']) .masthead__theme :global(.theme-icon--light) {
+    display: block;
+  }
+
+  .masthead__burger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    height: 2.25rem;
+    padding-left: 0.65rem;
+    margin-left: 0.25rem;
+    border-left: 1px solid var(--rule);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg);
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+  .masthead__burger:active {
+    transform: scale(0.96);
+  }
+  @media (min-width: 860px) {
+    .masthead__burger {
+      display: none;
+    }
+  }
+
+  /* Cibles tactiles confortables ≥ 44×44px sur écran tactile */
+  @media (pointer: coarse) {
+    .masthead__ctrl,
+    .masthead__burger {
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+    }
+    .masthead__cv {
+      min-height: 2.5rem;
+    }
+  }
+
+  .masthead__burger-bars {
+    position: relative;
+    width: 1rem;
+    height: 0.6rem;
+  }
+  .masthead__burger-bars span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+  .masthead__burger-bars span:first-child {
+    top: 1px;
+  }
+  .masthead__burger-bars span:last-child {
+    bottom: 1px;
+  }
+  .masthead__burger[aria-expanded='true'] .masthead__burger-bars span:first-child {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+  .masthead__burger[aria-expanded='true'] .masthead__burger-bars span:last-child {
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
+
+  .drawer {
+    position: fixed;
+    inset: calc(var(--nav-h) + env(safe-area-inset-top, 0px)) 0 0;
+    z-index: 55;
+    background: var(--bg);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(0, -12px, 0);
+    transition:
+      opacity 200ms var(--ease-out),
+      transform 200ms var(--ease-out),
+      visibility 0s linear 200ms;
+  }
+  :global(.drawer.is-open) {
+    opacity: 1;
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 280ms var(--ease-drawer),
+      transform 300ms var(--ease-drawer),
+      visibility 0s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .drawer,
+    :global(.drawer.is-open) {
+      transform: none;
+      transition: opacity 150ms ease, visibility 0s linear 150ms;
+    }
+    :global(.drawer.is-open) {
+      transition: opacity 150ms ease, visibility 0s;
+    }
+  }
+
+  .drawer__inner {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-top: 2rem;
+    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
+    gap: 2.5rem;
+  }
+
+  .drawer__link {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--rule);
+    transition: color var(--dur-fast) ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .drawer__link:hover {
+      color: var(--accent);
+    }
+  }
+  .drawer__num {
+    font-size: var(--fs-xs);
+    color: var(--muted);
+  }
+  .drawer__text {
+    font-size: clamp(2.2rem, 8vw, 3.2rem);
+    line-height: 1;
+    flex: 1;
+  }
+  .drawer__arrow {
+    color: var(--muted);
+  }
+
+  .drawer__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: var(--fs-xs);
+  }
+  .drawer__socials {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--muted);
+  }
+</style>

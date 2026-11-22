@@ -1,0 +1,766 @@
+---
+/**
+ * Section Projets — La section la plus visuelle du portfolio (bande sombre pleine largeur) :
+ * - Projet phare 01 en grand format visuel
+ * - Grille visuelle 2 colonnes (02 → 07) : 1 mockup d'écran + 1 titre + 1 phrase + 1 action
+ * - Tous les détails (Problème / Ce que j'ai fait / Résultat + Technos traduites) dans une modale dédiée.
+ */
+import Icon from './ui/Icon.astro';
+import ProjectVisual from './ProjectVisual.astro';
+import { type Lang, l, useTranslations } from '../i18n/ui';
+import { flagshipProject, galleryProjects, allProjects } from '../data/projects';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const cardDelays = [0, 75, 0, 75, 0, 75];
+---
+
+<section id="work" class="work-band" aria-labelledby="work-title">
+  <!-- Filigrane éditorial en profondeur lente (Motion scroll parallax) -->
+  <span class="work__watermark serif-italic" aria-hidden="true" data-motion-parallax="watermark">
+    01—07
+  </span>
+
+  <div class="container work__inner">
+    <header class="work__head" data-reveal>
+      <p class="kicker work__kicker">{t('work.kicker')}</p>
+      <h2 id="work-title" class="work__title">{t('work.title')}</h2>
+      <p class="work__sectors mono">{t('work.sectors')}</p>
+    </header>
+
+    <!-- PROJET PHARE 01 — Pleine largeur visuelle (perspective & contre-glissement Motion) -->
+    <article class="pcard pcard--featured" data-reveal>
+      <div class="pcard__depth" data-motion-parallax="flagship-media">
+        <button
+          type="button"
+          class="pcard__media pcard__media--wide"
+          data-project-open={flagshipProject.id}
+          data-cursor={t('cursor.view')}
+          aria-label={`${l(flagshipProject.title, lang)} — ${t('work.viewCase')}`}
+        >
+          <div class="pcard__wipe" data-wipe-scroll>
+            <ProjectVisual kind={flagshipProject.visual} lang={lang} size="wide" />
+          </div>
+          <span class="pcard__overlay" aria-hidden="true">
+            <span class="pcard__overlay-pill mono">
+              {t('work.viewCase')} →
+            </span>
+          </span>
+        </button>
+      </div>
+
+      <div class="pcard__depth" data-motion-parallax="flagship-copy">
+        <div class="pcard__body pcard__body--featured">
+          <div class="pcard__meta mono">
+            <span class="pcard__badge">{t('work.featuredLabel')}</span>
+            <span>{l(flagshipProject.context, lang)} · {flagshipProject.year}</span>
+          </div>
+
+          <h3 class="pcard__title pcard__title--featured serif">{l(flagshipProject.title, lang)}</h3>
+          <p class="pcard__summary">{l(flagshipProject.summary, lang)}</p>
+
+          <div class="pcard__actions">
+            <button type="button" class="pcard__cta" data-project-open={flagshipProject.id}>
+              <span>{t('work.viewCase')}</span>
+              <Icon name="arrow-right" size={15} />
+            </button>
+            <span class="pcard__priv mono">{t('work.confidential')}</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- GRILLE VISUELLE 2 COLONNES (02 → 07, colonnes magazine décalées Motion) -->
+    <div class="pgrid">
+      {
+        galleryProjects.map((project, idx) => (
+          <div class="pgrid__slot" data-motion-parallax={idx % 2 === 1 ? 'col-right' : 'col-left'}>
+          <article class="pcard" data-reveal style={`--d:${cardDelays[idx] ?? 0}ms`}>
+            <button
+              type="button"
+              class="pcard__media"
+              data-project-open={project.id}
+              data-cursor={t('cursor.view')}
+              aria-label={`${l(project.title, lang)} — ${t('work.viewCase')}`}
+            >
+              <div class="pcard__wipe" data-wipe-scroll style={`--d:${cardDelays[idx] ?? 0}ms`}>
+                <ProjectVisual kind={project.visual} lang={lang} />
+              </div>
+              <span class="pcard__overlay" aria-hidden="true">
+                <span class="pcard__overlay-pill mono">{t('work.viewCase')} →</span>
+              </span>
+            </button>
+
+            <div class="pcard__body">
+              <div class="pcard__meta mono">
+                <span class="pcard__cat">{l(project.category, lang)}</span>
+                <span>{l(project.context, lang)} · {project.year}</span>
+              </div>
+
+              <h3 class="pcard__title">{l(project.title, lang)}</h3>
+              <p class="pcard__summary">{l(project.summary, lang)}</p>
+
+              <div class="pcard__actions">
+                <button type="button" class="pcard__cta" data-project-open={project.id}>
+                  <span>{t('work.viewCase')}</span>
+                  <Icon name="arrow-right" size={14} />
+                </button>
+
+                {project.repo ? (
+                  <a
+                    class="pcard__repo mono"
+                    href={project.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>GitHub</span>
+                    <Icon name="arrow-up-right" size={13} />
+                    <span class="sr-only"> {t('external')}</span>
+                  </a>
+                ) : (
+                  <span class="pcard__priv mono">{t('work.confidential')}</span>
+                )}
+              </div>
+            </div>
+          </article>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- MODALES D'ÉTUDES DE CAS (Desktop centrée / Mobile Bottom Sheet avec Swipe-to-Dismiss + Prev/Next) -->
+  {
+    allProjects.map((project, index) => {
+      const prevProject = allProjects[(index - 1 + allProjects.length) % allProjects.length];
+      const nextProject = allProjects[(index + 1) % allProjects.length];
+      return (
+        <div
+          id={`modal-${project.id}`}
+          class="pmodal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={`modal-title-${project.id}`}
+          data-project-modal
+          hidden
+        >
+          <div class="pmodal__backdrop" data-modal-backdrop aria-hidden="true"></div>
+
+          <div class="pmodal__dialog" data-modal-dialog>
+            <div class="pmodal__bar" data-modal-handle>
+              <span class="pmodal__grab" aria-hidden="true"></span>
+              <span class="pmodal__meta mono">
+                {project.number} / 0{allProjects.length} · {l(project.category, lang)} · {project.year}
+              </span>
+
+              <div class="pmodal__controls">
+                <button
+                  type="button"
+                  class="pmodal__icon-btn"
+                  data-modal-prev={prevProject.id}
+                  aria-label={`${t('work.prev')} : ${l(prevProject.title, lang)}`}
+                  title={t('work.prev')}
+                >
+                  <Icon name="arrow-left" size={16} />
+                </button>
+                <button
+                  type="button"
+                  class="pmodal__icon-btn"
+                  data-modal-next={nextProject.id}
+                  aria-label={`${t('work.next')} : ${l(nextProject.title, lang)}`}
+                  title={t('work.next')}
+                >
+                  <Icon name="arrow-right" size={16} />
+                </button>
+                <button
+                  type="button"
+                  class="pmodal__icon-btn pmodal__close"
+                  data-modal-close
+                  aria-label={t('work.closeModal')}
+                >
+                  <Icon name="x" size={17} />
+                </button>
+              </div>
+            </div>
+
+            <div class="pmodal__scroll">
+              <div class="pmodal__head">
+                <p class="pmodal__ctx mono">{l(project.context, lang)}</p>
+                <h3 id={`modal-title-${project.id}`} class="pmodal__title serif">
+                  {l(project.title, lang)}
+                </h3>
+              </div>
+
+              <div class="pmodal__visual">
+                <ProjectVisual kind={project.visual} lang={lang} size="wide" />
+              </div>
+
+              <!-- 3 bullets max : Besoin / Action / Résultat -->
+              <ul role="list" class="pmodal__bullets">
+                <li class="pmodal__bullet">
+                  <span class="pmodal__bullet-k mono">{t('work.problem')}</span>
+                  <p>{l(project.problem, lang)}</p>
+                </li>
+                <li class="pmodal__bullet">
+                  <span class="pmodal__bullet-k mono">{t('work.solution')}</span>
+                  <p>{l(project.solution, lang)}</p>
+                </li>
+                <li class="pmodal__bullet pmodal__bullet--result">
+                  <span class="pmodal__bullet-k mono">{t('work.result')}</span>
+                  <p>{l(project.result, lang)}</p>
+                </li>
+              </ul>
+
+              <!-- Technologies avec traduction bénéfice -->
+              <div class="pmodal__tech">
+                <p class="pmodal__tech-label mono">{t('work.stack')}</p>
+                <ul role="list" class="pmodal__tech-list">
+                  {project.stack.map((tech) => (
+                    <li class="pmodal__tech-item">
+                      <strong>{tech.name}</strong>
+                      <span>→ {l(tech.benefit, lang)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div class="pmodal__foot">
+                <span class="pmodal__role mono">
+                  {t('work.role')} : <strong>{l(project.role, lang)}</strong>
+                </span>
+
+                {project.repo ? (
+                  <a
+                    class="pmodal__repo ed-link"
+                    href={project.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>{t('work.code')}</span>
+                    <Icon name="arrow-up-right" size={15} />
+                    <span class="sr-only"> {t('external')}</span>
+                  </a>
+                ) : (
+                  <span class="pcard__priv mono">{t('work.confidential')}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    })
+  }
+</section>
+
+<style>
+  .work-band {
+    position: relative;
+    overflow: hidden;
+    background: var(--plate-bg);
+    color: var(--plate-fg);
+    padding-block: clamp(4.5rem, 8.5vw, 8.5rem);
+    border-block: 1px solid var(--plate-rule);
+  }
+  .work__inner {
+    position: relative;
+    z-index: 1;
+  }
+  .work__watermark {
+    position: absolute;
+    top: clamp(2rem, 8vw, 6rem);
+    right: clamp(-2rem, 4vw, 3rem);
+    z-index: 0;
+    font-size: clamp(9rem, 22vw, 22rem);
+    line-height: 0.85;
+    color: var(--plate-fg);
+    opacity: 0.035;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .work__head {
+    display: grid;
+    gap: 0.9rem;
+    padding-bottom: clamp(2.25rem, 4.5vw, 3.5rem);
+    border-bottom: 1px solid var(--plate-rule-strong);
+  }
+  .work__kicker {
+    color: var(--plate-accent);
+  }
+  .work__title {
+    font-size: var(--fs-3xl);
+    font-weight: 500;
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tracking-tight);
+    max-width: 19ch;
+  }
+  .work__sectors {
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--plate-muted);
+    padding-top: 0.25rem;
+  }
+
+  /* Cartes visuelles */
+  .pcard {
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+  }
+
+  .pcard--featured {
+    padding-top: clamp(2.25rem, 4vw, 3.5rem);
+    padding-bottom: clamp(3rem, 5.5vw, 4.75rem);
+    border-bottom: 1px solid var(--plate-rule-strong);
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  @media (min-width: 960px) {
+    .pcard--featured {
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.85fr);
+      align-items: center;
+      gap: 2.75rem;
+    }
+  }
+
+  .pgrid {
+    padding-top: clamp(2.75rem, 5vw, 4.25rem);
+    display: grid;
+    gap: clamp(2.5rem, 4.5vw, 3.5rem) clamp(1.75rem, 3vw, 2.5rem);
+  }
+  @media (min-width: 780px) {
+    .pgrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Zone média cliquable avec overlay doux au survol */
+  .pcard__media {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    text-align: left;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--plate-bg-alt);
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+  .pcard__media:active {
+    transform: scale(0.99);
+  }
+  .pcard__wipe {
+    width: 100%;
+  }
+
+  .pcard__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 1rem;
+    background: linear-gradient(to top, rgb(20 19 17 / 0.58) 0%, transparent 45%);
+    opacity: 0;
+    transition: opacity 220ms var(--ease-out);
+    pointer-events: none;
+  }
+  .pcard__overlay-pill {
+    padding: 0.42rem 0.85rem;
+    border-radius: 999px;
+    background: var(--plate-accent);
+    color: #141311;
+    font-size: 0.68rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transform: translateY(6px);
+    transition: transform 240ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pcard:hover .pcard__overlay {
+      opacity: 1;
+    }
+    .pcard:hover .pcard__overlay-pill {
+      transform: translateY(0);
+    }
+  }
+
+  .pcard__body {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+  .pcard__body--featured {
+    gap: 0.95rem;
+  }
+
+  .pcard__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem 1rem;
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--plate-muted);
+  }
+  .pcard__badge,
+  .pcard__cat {
+    color: var(--plate-accent);
+  }
+
+  .pcard__title {
+    font-size: clamp(1.25rem, 1.08rem + 0.65vw, 1.6rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--plate-fg);
+  }
+  .pcard__title--featured {
+    font-size: clamp(1.85rem, 1.35rem + 1.8vw, 2.75rem);
+    line-height: 1.08;
+    font-weight: 400;
+  }
+
+  .pcard__summary {
+    font-size: var(--fs-sm);
+    line-height: 1.55;
+    color: var(--plate-soft);
+    max-width: 52ch;
+  }
+
+  .pcard__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.25rem;
+    padding-top: 0.55rem;
+    margin-top: 0.15rem;
+    border-top: 1px solid var(--plate-rule);
+  }
+
+  .pcard__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--plate-fg);
+    transition: color var(--dur-fast) ease, transform var(--dur-press) var(--ease-out);
+  }
+  .pcard__cta:active {
+    transform: scale(0.97);
+  }
+  .pcard__cta :global(svg) {
+    transition: transform 180ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pcard__cta:hover {
+      color: var(--plate-accent);
+    }
+    .pcard__cta:hover :global(svg) {
+      transform: translateX(3px);
+    }
+  }
+
+  .pcard__repo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--plate-muted);
+    transition: color var(--dur-fast) ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pcard__repo:hover {
+      color: var(--plate-accent);
+    }
+  }
+  .pcard__priv {
+    font-size: var(--fs-2xs);
+    color: var(--plate-muted);
+  }
+
+  /* =========================================================================
+     MODALE ÉTUDE DE CAS (Desktop centrée / Mobile Bottom Sheet tactile 1:1)
+     ========================================================================= */
+  .pmodal {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    place-items: center;
+    padding: clamp(0.75rem, 3vw, 2rem);
+  }
+  .pmodal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgb(12 11 9 / 0.78);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 180ms var(--ease-out);
+  }
+  .pmodal.is-open .pmodal__backdrop {
+    opacity: 1;
+    transition: opacity 240ms var(--ease-out);
+  }
+
+  .pmodal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 50rem);
+    max-height: min(90svh, 54rem);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    background: #171512;
+    color: var(--plate-fg);
+    border: 1px solid var(--plate-rule-strong);
+    border-radius: 10px;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.96) translate3d(0, 10px, 0);
+    transition:
+      opacity 180ms var(--ease-out),
+      transform 180ms var(--ease-out);
+  }
+  .pmodal.is-open .pmodal__dialog {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+    transition:
+      opacity 240ms var(--ease-out),
+      transform 240ms var(--ease-out);
+  }
+
+  /* Bottom Sheet tactile sur mobile (< 680px) */
+  @media (max-width: 679px) {
+    .pmodal {
+      align-items: end;
+      padding: 0;
+    }
+    .pmodal__dialog {
+      width: 100%;
+      max-height: 92dvh;
+      border-radius: 18px 18px 0 0;
+      border-bottom: 0;
+      opacity: 1;
+      transform: translate3d(0, 100%, 0);
+      transition: transform 200ms var(--ease-out);
+    }
+    .pmodal.is-open .pmodal__dialog {
+      transform: translate3d(0, 0, 0);
+      transition: transform 320ms var(--ease-drawer);
+    }
+  }
+
+  .pmodal__bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1.2rem;
+    border-bottom: 1px solid var(--plate-rule);
+    background: #1d1a16;
+  }
+  .pmodal__grab {
+    display: none;
+  }
+  @media (max-width: 679px) {
+    .pmodal__bar {
+      padding-top: 1.55rem;
+      touch-action: pan-x;
+      cursor: grab;
+    }
+    .pmodal__grab {
+      display: block;
+      position: absolute;
+      top: 0.55rem;
+      left: 50%;
+      width: 2.5rem;
+      height: 4px;
+      border-radius: 999px;
+      transform: translateX(-50%);
+      background: rgb(239 234 224 / 0.28);
+    }
+  }
+
+  .pmodal__meta {
+    min-width: 0;
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--plate-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pmodal__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+  .pmodal__icon-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 5px;
+    display: inline-grid;
+    place-items: center;
+    color: var(--plate-fg);
+    border: 1px solid var(--plate-rule);
+    transition:
+      border-color var(--dur-fast) ease,
+      color var(--dur-fast) ease,
+      transform var(--dur-press) var(--ease-out);
+  }
+  .pmodal__icon-btn:active {
+    transform: scale(0.94);
+  }
+  @media (pointer: coarse) {
+    .pmodal__icon-btn {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pmodal__icon-btn:hover {
+      border-color: var(--plate-accent);
+      color: var(--plate-accent);
+    }
+  }
+
+  .pmodal__scroll {
+    padding: clamp(1.2rem, 3vw, 2rem);
+    padding-bottom: calc(clamp(1.25rem, 3vw, 2rem) + env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .pmodal__head {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .pmodal__ctx {
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--plate-accent);
+  }
+
+  .pmodal__title {
+    font-size: clamp(1.7rem, 1.25rem + 1.6vw, 2.45rem);
+    line-height: 1.1;
+    color: var(--plate-fg);
+  }
+
+  .pmodal__bullets {
+    display: grid;
+    gap: 0.85rem;
+  }
+  @media (min-width: 680px) {
+    .pmodal__bullets {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+  }
+  .pmodal__bullet {
+    padding: 1rem;
+    border-radius: 6px;
+    background: #1f1c18;
+    border: 1px solid var(--plate-rule);
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+  }
+  .pmodal__bullet--result {
+    border-color: rgb(240 128 128 / 0.48);
+  }
+  .pmodal__bullet-k {
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--plate-accent);
+  }
+  .pmodal__bullet p {
+    font-size: var(--fs-sm);
+    line-height: 1.55;
+    color: var(--plate-soft);
+  }
+
+  .pmodal__tech {
+    display: grid;
+    gap: 0.7rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--plate-rule);
+  }
+  .pmodal__tech-label {
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--plate-muted);
+  }
+  .pmodal__tech-list {
+    display: grid;
+    gap: 0.5rem;
+  }
+  @media (min-width: 620px) {
+    .pmodal__tech-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem 1.25rem;
+    }
+  }
+  .pmodal__tech-item {
+    font-size: var(--fs-xs);
+    color: var(--plate-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    line-height: 1.45;
+  }
+  .pmodal__tech-item strong {
+    color: var(--plate-fg);
+    font-weight: 600;
+  }
+
+  .pmodal__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--plate-rule);
+  }
+  .pmodal__role {
+    font-size: var(--fs-xs);
+    color: var(--plate-muted);
+  }
+  .pmodal__role strong {
+    color: var(--plate-fg);
+    font-weight: 500;
+  }
+  .pmodal__repo {
+    color: var(--plate-fg);
+    font-size: var(--fs-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pmodal__backdrop,
+    .pmodal__dialog {
+      transition: opacity 150ms ease;
+      transform: none !important;
+    }
+  }
+</style>

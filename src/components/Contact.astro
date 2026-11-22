@@ -1,0 +1,247 @@
+---
+/**
+ * Section Contact — Sobre, centrée sur l'action, zéro paragraphe :
+ * - Pastille de disponibilité visuelle
+ * - Titre direct et humain
+ * - Adresse e-mail monumentale cliquable (copie 1 clic + curseur COPIER/COPIÉ ✓)
+ * - 2 CTA primaires (Envoyer un e-mail + Télécharger le CV) + liens icônes LinkedIn / GitHub
+ */
+import Icon from './ui/Icon.astro';
+import { type Lang, useTranslations } from '../i18n/ui';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="contact" class="contact" aria-labelledby="contact-title">
+  <div class="container">
+    <hr class="rule" data-rule-draw />
+
+    <div class="contact__parallax" data-motion-parallax="contact-settle">
+    <div class="contact__body" data-reveal>
+      <p class="contact__status mono">
+        <span class="contact__dot" aria-hidden="true"></span>
+        <span>{t('contact.status')}</span>
+      </p>
+
+      <h2 id="contact-title" class="contact__title serif">{t('contact.title')}</h2>
+
+      <div class="contact__cta-row">
+        <a class="btn btn--primary" href={`mailto:${profile.email}`}>
+          <Icon name="mail" size={16} />
+          <span>{t('contact.write')}</span>
+        </a>
+
+        <a class="btn btn--secondary" href={profile.cv[lang]} download data-cv-download>
+          <Icon name="download" size={15} />
+          <span>{t('hero.cta.cv')}</span>
+        </a>
+      </div>
+
+      <div class="contact__mail">
+        <button
+          type="button"
+          class="contact__address"
+          data-copy-email={profile.email}
+          data-label-default={t('contact.copyHint')}
+          data-label-copied={t('contact.copied')}
+          data-cursor={t('cursor.copy')}
+          data-cursor-default={t('cursor.copy')}
+          data-cursor-copied={t('cursor.copied')}
+        >
+          <span class="contact__address-text">{profile.email}</span>
+          <span class="contact__address-hint mono">
+            <span class="contact__morph" aria-hidden="true">
+              <Icon name="copy" size={14} class="contact__ico contact__ico--copy" />
+              <Icon name="check" size={14} class="contact__ico contact__ico--check" />
+            </span>
+            <span data-copy-text>{t('contact.copyHint')}</span>
+          </span>
+        </button>
+        <p class="sr-only" role="status" aria-live="polite" data-copy-status></p>
+      </div>
+
+      <nav class="contact__links mono" aria-label="Contact links">
+        <a class="contact__social" href={profile.socials.linkedin} target="_blank" rel="noopener noreferrer">
+          <Icon name="linkedin" size={15} />
+          <span>LinkedIn</span>
+          <Icon name="arrow-up-right" size={13} />
+          <span class="sr-only"> {t('external')}</span>
+        </a>
+        <a class="contact__social" href={profile.socials.github} target="_blank" rel="noopener noreferrer">
+          <Icon name="github" size={15} />
+          <span>GitHub</span>
+          <Icon name="arrow-up-right" size={13} />
+          <span class="sr-only"> {t('external')}</span>
+        </a>
+      </nav>
+    </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding-bottom: clamp(4.5rem, 8vw, 7.5rem);
+  }
+
+  .contact__body {
+    padding-top: clamp(3rem, 6vw, 5.25rem);
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .contact__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .contact__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: #2f9e5b;
+    box-shadow: 0 0 0 3px rgb(47 158 91 / 0.18);
+  }
+
+  .contact__title {
+    font-size: clamp(2.4rem, 1.5rem + 3.8vw, 4.8rem);
+    line-height: 1.03;
+    letter-spacing: -0.02em;
+    max-width: 17ch;
+  }
+
+  .contact__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.85rem 1rem;
+    padding-top: 0.25rem;
+  }
+
+  .contact__mail {
+    width: min(100%, 48rem);
+    padding-top: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  .contact__address {
+    width: 100%;
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem 1.5rem;
+    padding: clamp(0.95rem, 2vw, 1.35rem) clamp(1rem, 2.2vw, 1.5rem);
+    border-radius: 6px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule-strong);
+    transition:
+      border-color var(--dur-ui) ease,
+      color var(--dur-ui) ease,
+      transform var(--dur-press) var(--ease-out);
+  }
+  .contact__address:active {
+    transform: scale(0.99);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .contact__address:hover {
+      border-color: var(--accent);
+    }
+    .contact__address:hover .contact__address-text {
+      color: var(--accent);
+    }
+  }
+
+  .contact__address-text {
+    min-width: 0;
+    font-size: clamp(1.1rem, 0.7rem + 1.6vw, 1.85rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    transition: color var(--dur-fast) ease;
+  }
+
+  .contact__address-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: color var(--dur-fast) ease;
+  }
+  .contact__morph {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .contact__morph :global(.contact__ico) {
+    position: absolute;
+    inset: 0;
+    transition:
+      opacity 180ms var(--ease-out),
+      transform 180ms var(--ease-out),
+      filter 180ms ease;
+  }
+  .contact__morph :global(.contact__ico--check) {
+    opacity: 0;
+    transform: scale(0.6);
+    filter: blur(2px);
+  }
+  :global(.contact__address.is-copied) .contact__morph :global(.contact__ico--copy) {
+    opacity: 0;
+    transform: scale(0.6);
+    filter: blur(2px);
+  }
+  :global(.contact__address.is-copied) .contact__morph :global(.contact__ico--check) {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  :global(.contact__address.is-copied) .contact__address-hint {
+    color: var(--accent);
+  }
+
+  .contact__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.75rem;
+    padding-top: 0.25rem;
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .contact__social {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--muted);
+    transition: color var(--dur-fast) ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .contact__social:hover {
+      color: var(--accent);
+    }
+  }
+</style>

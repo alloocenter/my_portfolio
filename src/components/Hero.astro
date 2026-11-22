@@ -1,0 +1,262 @@
+---
+/**
+ * Hero — Layout Texte gauche / Visuel produit droite (Option A) :
+ * Compréhensible en 3 secondes par un recruteur non-technique :
+ * - Nom monumental (rideau compositor 0ms / 90ms)
+ * - Gauche : 1 phrase claire sans jargon + 2 CTA directs
+ * - Droite : Mockup produit FinTech Web + Mobile (mask reveal clip-path + parallax mobile)
+ * - Pied : 3 chiffres clés animés (remplacent un long paragraphe d'intro)
+ */
+import Icon from './ui/Icon.astro';
+import HeroMockup from './HeroMockup.astro';
+import { type Lang, l, useTranslations } from '../i18n/ui';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const decl = profile.declaration[lang];
+---
+
+<section id="top" class="cover" aria-label={profile.name}>
+  <div class="container">
+    <div class="cover__meta mono">
+      <span>{t('hero.kickerLeft')}</span>
+      <span class="cover__status">
+        <span class="cover__dot" aria-hidden="true"></span>
+        {t('hero.kickerRight')}
+      </span>
+    </div>
+    <hr class="rule" data-hero-rule />
+
+    <h1 class="cover__name">
+      <span class="cover__line cover__line--first" data-motion-parallax="hero-left">
+        <span class="cover__curtain" data-curtain style="--d:0ms">{profile.firstName}</span>
+      </span>
+      <span class="cover__line cover__line--last" data-motion-parallax="hero-right">
+        <span class="cover__curtain serif-italic" data-curtain style="--d:90ms">{profile.lastName}</span>
+      </span>
+    </h1>
+    <hr class="rule" data-hero-rule style="--d:60ms" />
+
+    <!-- Texte à gauche / Visuel produit dominant à droite -->
+    <div class="cover__spread">
+      <div class="cover__statement-col" data-hero-block>
+        <p class="cover__declaration">
+          {decl.before}<em class="serif-italic cover__em">{decl.italic}</em>{decl.after}
+        </p>
+
+        <p class="cover__sub">{l(profile.subDeclaration, lang)}</p>
+
+        <div class="cover__actions">
+          <a class="btn btn--primary" href="#work">
+            <span>{t('hero.cta.work')}</span>
+            <Icon name="arrow-right" size={16} />
+          </a>
+
+          <a class="btn btn--secondary" href={profile.cv[lang]} download data-cv-download>
+            <span>{t('hero.cta.cv')}</span>
+            <Icon name="download" size={15} />
+          </a>
+        </div>
+
+        <div class="cover__socials mono">
+          <a href={profile.socials.linkedin} target="_blank" rel="noopener noreferrer">
+            LinkedIn ↗<span class="sr-only"> {t('external')}</span>
+          </a>
+          <span aria-hidden="true">/</span>
+          <a href={profile.socials.github} target="_blank" rel="noopener noreferrer">
+            GitHub ↗<span class="sr-only"> {t('external')}</span>
+          </a>
+          <span aria-hidden="true">/</span>
+          <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        </div>
+      </div>
+
+      <div class="cover__visual-col" data-wipe>
+        <HeroMockup lang={lang} />
+      </div>
+    </div>
+
+    <!-- 3 chiffres clés animés -->
+    <div data-motion-parallax="hero-metrics">
+      <dl class="cover__metrics" data-reveal>
+        {
+          profile.metrics.map((metric) => (
+            <div class="metric">
+              <dt class="metric__val serif">
+                <span data-count={metric.value} data-suffix={metric.suffix ?? ''}>
+                  {metric.value}{metric.suffix ?? ''}
+                </span>
+              </dt>
+              <dd class="metric__lbl mono">{l(metric.label, lang)}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cover {
+    padding-top: calc(var(--nav-h) + env(safe-area-inset-top, 0px) + clamp(1.25rem, 2.6vw, 2rem));
+    padding-bottom: clamp(4rem, 7vw, 6.5rem);
+  }
+
+  .cover__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+    padding-bottom: 0.85rem;
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--muted);
+  }
+  .cover__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+  .cover__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: #2f9e5b;
+    box-shadow: 0 0 0 3px rgb(47 158 91 / 0.18);
+  }
+
+  .cover__name {
+    padding-block: clamp(1rem, 2.5vw, 2.1rem);
+    font-size: clamp(3rem, 1.1rem + 8vw, 8.2rem);
+    font-weight: 600;
+    line-height: var(--lh-none);
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+  }
+  .cover__line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .cover__line--last {
+    text-align: right;
+    text-transform: none;
+    letter-spacing: -0.02em;
+    font-size: 1.08em;
+    color: var(--fg);
+  }
+  .cover__curtain {
+    display: inline-block;
+  }
+
+  .cover__spread {
+    display: grid;
+    gap: clamp(2rem, 4.5vw, 3.5rem);
+    padding-top: clamp(2rem, 3.8vw, 3.25rem);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .cover__spread {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 2.25rem;
+    }
+    .cover__statement-col {
+      grid-column: 1 / 7;
+    }
+    .cover__visual-col {
+      grid-column: 7 / 13;
+    }
+  }
+
+  .cover__statement-col {
+    display: grid;
+    gap: clamp(1.25rem, 2.2vw, 1.85rem);
+  }
+
+  .cover__declaration {
+    font-size: clamp(1.65rem, 1.15rem + 2vw, 2.85rem);
+    font-weight: 500;
+    line-height: 1.14;
+    letter-spacing: var(--tracking-tight);
+    max-width: 21ch;
+  }
+  .cover__em {
+    color: var(--accent);
+    font-size: 1.12em;
+    padding-inline: 0.04em;
+  }
+
+  .cover__sub {
+    font-size: var(--fs-base);
+    color: var(--muted);
+    max-width: 44ch;
+    line-height: 1.55;
+  }
+
+  .cover__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.85rem 1rem;
+    padding-top: 0.25rem;
+  }
+
+  .cover__socials {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    font-size: var(--fs-xs);
+    color: var(--muted);
+  }
+  .cover__socials a {
+    transition: color var(--dur-fast) ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .cover__socials a:hover {
+      color: var(--accent);
+    }
+  }
+
+  /* Bandeau chiffres clés */
+  .cover__metrics {
+    margin-top: clamp(2.75rem, 5vw, 4.25rem);
+    padding-top: clamp(1.5rem, 3vw, 2.25rem);
+    border-top: 1px solid var(--rule-strong);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem 2rem;
+  }
+  @media (max-width: 560px) {
+    .cover__metrics {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+
+  .metric {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .metric__val {
+    font-size: clamp(2.4rem, 1.8rem + 2.4vw, 3.8rem);
+    line-height: 1;
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .metric__lbl {
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+</style>

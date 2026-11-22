@@ -1,0 +1,273 @@
+---
+/**
+ * Section Compétences — Grille visuelle de logos/icônes par catégorie :
+ * - Zéro liste à puces brute, zéro barre de progression
+ * - 4 familles lisibles avec phrase-bénéfice
+ * - Tooltips « traduction bénéfice » au survol / focus / tap mobile (passage instantané entre voisins)
+ * - Cascade organique courte et plafonnée à l'entrée
+ */
+import TechLogo from './ui/TechLogo.astro';
+import { type Lang, l, useTranslations } from '../i18n/ui';
+import { skillGroups } from '../data/skills';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const tileDelays = [0, 35, 65, 90, 105];
+---
+
+<section id="skills" class="skills" aria-labelledby="skills-title">
+  <div class="container">
+    <header class="skills__head" data-reveal>
+      <div>
+        <p class="kicker">{t('skills.kicker')}</p>
+        <h2 id="skills-title" class="skills__title">{t('skills.title')}</h2>
+      </div>
+      <p class="skills__hint mono">{t('skills.hint')}</p>
+    </header>
+
+    <div class="skills__groups" data-skills-grid>
+      {
+        skillGroups.map((group, gIdx) => (
+          <div class="skills__slot" data-motion-parallax={gIdx % 2 === 1 ? 'skills-right' : 'skills-left'}>
+          <section class="sgroup" aria-labelledby={`skill-cat-${group.id}`}>
+            <header class="sgroup__head">
+              <h3 id={`skill-cat-${group.id}`} class="sgroup__title">{l(group.title, lang)}</h3>
+              <p class="sgroup__sub">{l(group.subtitle, lang)}</p>
+            </header>
+
+            <ul role="list" class="sgroup__grid">
+              {group.items.map((item, idx) => (
+                <li class="sgroup__cell" data-reveal style={`--d:${tileDelays[idx] ?? 115}ms`}>
+                  <button
+                    type="button"
+                    class="stile"
+                    data-skill-tile
+                    aria-expanded="false"
+                    aria-describedby={`tip-${group.id}-${item.id}`}
+                  >
+                    <span class="stile__icon">
+                      <TechLogo id={item.id} size={24} />
+                    </span>
+                    <span class="stile__name">{item.name}</span>
+
+                    <span id={`tip-${group.id}-${item.id}`} role="tooltip" class="stile__tip">
+                      <strong>{item.name}</strong>
+                      <span>{l(item.benefit, lang)}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills {
+    padding-top: clamp(4.5rem, 8.5vw, 8rem);
+    padding-bottom: clamp(4.5rem, 7.5vw, 7rem);
+  }
+
+  .skills__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .skills__title {
+    margin-top: 0.75rem;
+    font-size: var(--fs-3xl);
+    font-weight: 500;
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tracking-tight);
+    max-width: 17ch;
+  }
+  .skills__hint {
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    max-width: 34ch;
+  }
+
+  .skills__groups {
+    padding-top: clamp(2rem, 4vw, 3rem);
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2rem);
+  }
+  @media (min-width: 900px) {
+    .skills__groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .skills__slot {
+    position: relative;
+    z-index: 1;
+    display: grid;
+  }
+  .skills__slot:has(.is-tip-open) {
+    z-index: 20;
+  }
+
+  .sgroup {
+    padding: clamp(1.35rem, 2.8vw, 1.85rem);
+    border-radius: 8px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    display: grid;
+    gap: 1.35rem;
+    align-content: start;
+  }
+
+  .sgroup__head {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .sgroup__title {
+    font-size: var(--fs-xl);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .sgroup__sub {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .sgroup__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5.8rem, 1fr));
+    gap: 0.65rem;
+  }
+
+  .sgroup__cell {
+    position: static;
+  }
+  @media (min-width: 640px) {
+    .sgroup__cell {
+      position: relative;
+    }
+  }
+
+  .stile {
+    width: 100%;
+    padding: 0.85rem 0.55rem;
+    border-radius: 6px;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    color: var(--fg);
+    transition:
+      border-color var(--dur-fast) ease,
+      color var(--dur-fast) ease,
+      transform var(--dur-press) var(--ease-out);
+  }
+  .stile:active {
+    transform: scale(0.96);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .stile:hover,
+    .stile.is-tip-open {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+  }
+  .stile.is-tip-open {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .stile__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 6px;
+    background: var(--bg-alt);
+    transition: background-color var(--dur-fast) ease;
+  }
+  .stile__name {
+    font-size: var(--fs-2xs);
+    font-weight: 500;
+    color: var(--fg);
+    line-height: 1.2;
+  }
+
+  /* Tooltip bénéfice (origin-aware, instantané sur tuiles adjacentes) */
+  .stile__tip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(100% + 0.55rem);
+    z-index: 30;
+    padding: 0.65rem 0.8rem;
+    border-radius: 6px;
+    background: var(--plate-bg);
+    color: var(--plate-fg);
+    border: 1px solid var(--plate-rule-strong);
+    box-shadow: 0 14px 28px -12px rgb(20 19 17 / 0.45);
+    text-align: left;
+    display: grid;
+    gap: 0.2rem;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px) scale(0.97);
+    transform-origin: bottom center;
+    transition:
+      opacity 125ms var(--ease-out),
+      transform 125ms var(--ease-out);
+  }
+  @media (min-width: 640px) {
+    .stile__tip {
+      left: 50%;
+      right: auto;
+      width: max-content;
+      max-width: 15.5rem;
+      transform: translate(-50%, 4px) scale(0.97);
+    }
+  }
+  .stile__tip strong {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--plate-accent);
+  }
+  .stile__tip span {
+    font-size: var(--fs-xs);
+    line-height: 1.4;
+    color: var(--plate-fg);
+  }
+
+  :global(.stile.is-tip-open) .stile__tip {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  @media (min-width: 640px) {
+    :global(.stile.is-tip-open) .stile__tip {
+      transform: translate(-50%, 0) scale(1);
+    }
+  }
+  :global(.stile.is-tip-instant) .stile__tip {
+    transition-duration: 0ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stile__tip {
+      transition: opacity 120ms ease;
+    }
+  }
+</style>

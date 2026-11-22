@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/ui/Icon.astro';
+import { useTranslations } from '../i18n/ui';
+
+const t = useTranslations('fr');
+---
+
+<Base lang="fr" title={`404 — ${t('notfound.title')}`} noindex>
+  <Header lang="fr" />
+  <main id="main" class="nf container">
+    <p class="kicker">Erreur 404</p>
+    <h1 class="nf__title serif">{t('notfound.title')}</h1>
+    <p class="nf__text">{t('notfound.text')}</p>
+    <div class="nf__actions">
+      <a class="ed-link" href="/">
+        <span>{t('notfound.back')} (FR)</span>
+        <Icon name="arrow-right" />
+      </a>
+      <a class="ed-link" href="/en/">
+        <span>Back to home (EN)</span>
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+  </main>
+  <Footer lang="fr" />
+</Base>
+
+<style>
+  .nf {
+    min-height: calc(100svh - 4.5rem);
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 1.25rem;
+    padding-top: var(--nav-h);
+  }
+  .nf__title {
+    font-size: var(--fs-3xl);
+    line-height: var(--lh-tight);
+  }
+  .nf__text {
+    font-size: var(--fs-lg);
+    color: var(--muted);
+    max-width: 34rem;
+  }
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+  }
+</style>

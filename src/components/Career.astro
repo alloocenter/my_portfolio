@@ -1,0 +1,600 @@
+---
+/**
+ * Section Parcours & Formations :
+ * - Timeline visuelle verticale dont l'axe se dessine au scroll (`scaleY: 0 → 1` via GSAP ScrollTrigger)
+ *   et dont les nœuds s'allument en cascade au fil de la lecture.
+ * - Dates monumentales + emblèmes d'organisations + 1 seule ligne d'impact (détails repliables en option).
+ * - En dessous : diptyque visuel Double cursus (Finance → Logiciel) + badges Certifications + Langues.
+ */
+import Icon from './ui/Icon.astro';
+import OrgEmblem from './ui/OrgEmblem.astro';
+import { type Lang, l, useTranslations } from '../i18n/ui';
+import { experiences } from '../data/experience';
+import { degrees, certifications, spokenLanguages } from '../data/education';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const financeDegrees = degrees.filter((d) => d.domain === 'finance');
+const softwareDegrees = degrees.filter((d) => d.domain === 'software');
+---
+
+<section id="experience" class="career" aria-labelledby="exp-title">
+  <div class="container">
+    <hr class="rule" data-rule-draw />
+
+    <!-- 1. TIMELINE VISUELLE DES EXPÉRIENCES -->
+    <div class="career__block">
+      <header class="career__head" data-reveal>
+        <p class="kicker">{t('exp.kicker')}</p>
+        <h2 id="exp-title" class="career__title">{t('exp.title')}</h2>
+      </header>
+
+      <div class="timeline" data-timeline-scene>
+        <!-- Rail vertical animé au scroll (scaleY: 0 → 1) -->
+        <div class="timeline__rail" aria-hidden="true">
+          <div class="timeline__rail-fill" data-timeline-fill></div>
+        </div>
+
+        <ol role="list" class="timeline__list">
+          {
+            experiences.map((exp, idx) => {
+              const isCurrent = exp.end === null;
+              const period = `${l(exp.start, lang)} — ${isCurrent ? t('exp.now') : l(exp.end!, lang)}`;
+              const panelId = `exp-details-${exp.id}`;
+              return (
+                <li
+                  class:list={['titem', idx === 0 && 'is-reached']}
+                  data-timeline-node
+                >
+                  <span class:list={['titem__dot', isCurrent && 'titem__dot--now']} aria-hidden="true"></span>
+
+                  <div class="titem__date" data-motion-parallax="year">
+                    <span class="titem__year serif">{exp.yearBig}</span>
+                    <span class:list={['titem__period mono', isCurrent && 'titem__period--now']}>
+                      {period}
+                    </span>
+                  </div>
+
+                  <div class="titem__card">
+                    <div class="titem__top">
+                      <OrgEmblem kind={exp.id} />
+                      <div class="titem__who">
+                        <h3 class="titem__role">{l(exp.role, lang)}</h3>
+                        <p class="titem__org">
+                          <strong>{exp.company}</strong> · <span>{l(exp.place, lang)}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <p class="titem__summary">{l(exp.summary, lang)}</p>
+
+                    <div class="titem__more">
+                      <button
+                        type="button"
+                        class="titem__toggle mono"
+                        aria-expanded="false"
+                        aria-controls={panelId}
+                        data-collapse-trigger
+                        data-label-open={t('exp.less')}
+                        data-label-close={`+ ${t('exp.more')}`}
+                      >
+                        <span data-collapse-label>+ {t('exp.more')}</span>
+                      </button>
+
+                      <div id={panelId} class="titem__panel" hidden>
+                        <div class="titem__panel-inner" data-panel-inner>
+                          <ul role="list" class="titem__points">
+                            {exp.highlights.map((h) => (
+                              <li>{l(h, lang)}</li>
+                            ))}
+                          </ul>
+                          <p class="titem__stack mono">{exp.stack.join(' · ')}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              );
+            })
+          }
+        </ol>
+      </div>
+    </div>
+
+    <!-- 2. BANDEAU VISUEL : DOUBLE CURSUS, CERTIFICATIONS & LANGUES -->
+    <div id="education" class="edu" aria-labelledby="edu-title">
+      <hr class="rule" data-rule-draw />
+
+      <header class="career__head edu__head" data-reveal>
+        <p class="kicker">{t('edu.kicker')}</p>
+        <h2 id="edu-title" class="career__title">{t('edu.title')}</h2>
+      </header>
+
+      <!-- Diptyque Finance → Génie Logiciel (contre-glissement Motion au scroll) -->
+      <div class="edu__diptych">
+        <div class="edu__slot" data-motion-parallax="edu-left">
+          <div class="edu-card" data-reveal="left">
+            <div class="edu-card__head">
+              <span class="edu-card__icon"><Icon name="landmark" size={18} /></span>
+              <p class="edu-card__phase mono">{t('edu.phase.finance')}</p>
+            </div>
+            <ul role="list" class="edu-card__list">
+              {
+                financeDegrees.map((deg) => (
+                  <li class="edu-card__item">
+                    <span class="edu-card__period mono">{deg.period}</span>
+                    <h3 class="edu-card__deg">{l(deg.title, lang)}</h3>
+                    <p class="edu-card__school">{deg.school}</p>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+
+        <div class="edu__slot" data-motion-parallax="edu-right">
+          <div class="edu-card edu-card--accent" data-reveal="right" style="--d:90ms">
+            <div class="edu-card__head">
+              <span class="edu-card__icon edu-card__icon--accent"><Icon name="graduation" size={18} /></span>
+              <p class="edu-card__phase edu-card__phase--accent mono">{t('edu.phase.software')}</p>
+            </div>
+            <ul role="list" class="edu-card__list">
+              {
+                softwareDegrees.map((deg) => (
+                  <li class="edu-card__item">
+                    <span class="edu-card__period mono">
+                      {deg.current ? `${deg.period} — ${t('edu.current')}` : deg.period}
+                    </span>
+                    <h3 class="edu-card__deg">{l(deg.title, lang)}</h3>
+                    <p class="edu-card__school">{deg.school}</p>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certifications & Langues en badges visuels -->
+      <div class="edu__extras" data-reveal>
+        <div class="certs-wrap">
+          <h3 class="kicker">{t('edu.certs')}</h3>
+          <ul role="list" class="certs-grid">
+            {
+              certifications.map((cert) => (
+                <li class="cert-card">
+                  <OrgEmblem kind={cert.badge} />
+                  <div>
+                    <p class="cert-card__title">
+                      {cert.url ? (
+                        <a href={cert.url} target="_blank" rel="noopener noreferrer" class="ed-link">
+                          <span>{l(cert.title, lang)}</span>
+                          <Icon name="arrow-up-right" size={13} />
+                          <span class="sr-only"> {t('external')}</span>
+                        </a>
+                      ) : (
+                        l(cert.title, lang)
+                      )}
+                    </p>
+                    <p class="cert-card__issuer mono">{l(cert.issuer, lang)}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="langs-wrap">
+          <h3 class="kicker">{t('edu.languages')}</h3>
+          <ul role="list" class="lang-pills">
+            {
+              spokenLanguages.map((sp) => (
+                <li class="lang-pill">
+                  <span class="lang-pill__code mono">{sp.code}</span>
+                  <div>
+                    <p class="lang-pill__name">{l(sp.name, lang)}</p>
+                    <p class="lang-pill__lvl mono">{l(sp.level, lang)}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .career {
+    padding-bottom: clamp(4.5rem, 8vw, 7.5rem);
+  }
+
+  .career__block {
+    padding-top: clamp(2.5rem, 5vw, 4.5rem);
+    padding-bottom: clamp(3.5rem, 6vw, 5.5rem);
+  }
+
+  .career__head {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: clamp(2rem, 4vw, 3.25rem);
+  }
+  .career__title {
+    font-size: var(--fs-3xl);
+    font-weight: 500;
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tracking-tight);
+    max-width: 20ch;
+  }
+
+  /* =========================================================================
+     TIMELINE VERTICALE DESSINÉE AU SCROLL
+     ========================================================================= */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+  @media (min-width: 820px) {
+    .timeline {
+      padding-left: 2.75rem;
+    }
+  }
+
+  .timeline__rail {
+    position: absolute;
+    left: 0.45rem;
+    top: 0.65rem;
+    bottom: 0.65rem;
+    width: 2px;
+    background: var(--rule);
+    overflow: hidden;
+  }
+  .timeline__rail-fill {
+    width: 100%;
+    height: 100%;
+    background: var(--brand);
+    transform-origin: top center;
+    transform: scaleY(1);
+  }
+
+  .timeline__list {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .titem {
+    position: relative;
+    display: grid;
+    gap: 0.85rem 2rem;
+    align-items: start;
+    transition: opacity 280ms var(--ease-out);
+  }
+  @media (min-width: 820px) {
+    .titem {
+      grid-template-columns: 11.5rem minmax(0, 1fr);
+    }
+  }
+
+  .titem__dot {
+    position: absolute;
+    left: calc(-2rem + 0.45rem - 5px);
+    top: 0.65rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: var(--bg);
+    border: 2px solid var(--rule-strong);
+    transition: border-color 240ms var(--ease-out), background-color 240ms var(--ease-out), transform 240ms var(--ease-out);
+  }
+  @media (min-width: 820px) {
+    .titem__dot {
+      left: calc(-2.75rem + 0.45rem - 5px);
+      top: 0.9rem;
+    }
+  }
+  :global(.titem.is-reached) .titem__dot {
+    border-color: var(--accent);
+    background: var(--accent);
+    transform: scale(1.1);
+  }
+  .titem__dot--now {
+    box-shadow: 0 0 0 4px rgb(240 128 128 / 0.35);
+  }
+
+  .titem__date {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .titem__year {
+    font-size: clamp(2rem, 1.5rem + 1.4vw, 2.75rem);
+    line-height: 1;
+    color: var(--fg);
+  }
+  .titem__period {
+    font-size: var(--fs-2xs);
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .titem__period--now {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .titem__card {
+    padding: clamp(1.15rem, 2.4vw, 1.5rem);
+    border-radius: 8px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    display: grid;
+    gap: 0.85rem;
+    transition: border-color 220ms var(--ease-out);
+  }
+  :global(.titem.is-reached) .titem__card {
+    border-color: var(--rule-strong);
+  }
+
+  .titem__top {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+  .titem__who {
+    min-width: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .titem__role {
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+  .titem__org {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+  .titem__org strong {
+    color: var(--fg-soft);
+    font-weight: 500;
+  }
+
+  .titem__summary {
+    font-size: var(--fs-base);
+    line-height: 1.52;
+    color: var(--fg-soft);
+    max-width: 58ch;
+  }
+
+  .titem__toggle {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    padding-block: 0.35rem;
+    transition: color var(--dur-fast) ease;
+  }
+  @media (pointer: coarse) {
+    .titem__toggle {
+      min-height: 2.75rem;
+      padding-inline: 0.25rem;
+    }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .titem__toggle:hover {
+      color: var(--accent);
+    }
+  }
+  .titem__panel {
+    overflow: hidden;
+  }
+  .titem__panel-inner {
+    display: grid;
+    gap: 0.7rem;
+    padding-top: 0.7rem;
+    margin-top: 0.4rem;
+    border-top: 1px solid var(--rule);
+  }
+  .titem__points {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .titem__points li {
+    position: relative;
+    padding-left: 1rem;
+    font-size: var(--fs-sm);
+    color: var(--fg-soft);
+    line-height: 1.5;
+  }
+  .titem__points li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .titem__stack {
+    font-size: var(--fs-2xs);
+    color: var(--muted);
+  }
+
+  /* =========================================================================
+     DOUBLE CURSUS, CERTIFICATIONS & LANGUES
+     ========================================================================= */
+  .edu__head {
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .edu__diptych {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .edu__slot {
+    display: grid;
+  }
+  @media (min-width: 780px) {
+    .edu__diptych {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.75rem;
+    }
+  }
+
+  .edu-card {
+    padding: clamp(1.35rem, 2.8vw, 1.85rem);
+    border-radius: 8px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+  }
+  .edu-card--accent {
+    border-color: var(--accent);
+  }
+  .edu-card__head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .edu-card__icon {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 5px;
+    display: inline-grid;
+    place-items: center;
+    background: var(--bg);
+    border: 1px solid var(--rule-strong);
+    color: var(--fg);
+  }
+  .edu-card__icon--accent {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .edu-card__phase {
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .edu-card__phase--accent {
+    color: var(--accent);
+  }
+
+  .edu-card__list {
+    display: grid;
+    gap: 1rem;
+  }
+  .edu-card__item {
+    display: grid;
+    gap: 0.15rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--rule);
+  }
+  .edu-card__period {
+    font-size: var(--fs-2xs);
+    color: var(--muted);
+  }
+  .edu-card__deg {
+    font-size: var(--fs-base);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .edu-card__school {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+
+  /* Extras : Certifications & Langues */
+  .edu__extras {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    display: grid;
+    gap: 2rem;
+  }
+  @media (min-width: 960px) {
+    .edu__extras {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  .certs-wrap,
+  .langs-wrap {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .certs-grid {
+    display: grid;
+    gap: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .certs-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .cert-card {
+    padding: 0.9rem;
+    border-radius: 6px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .cert-card > div {
+    min-width: 0;
+  }
+  .cert-card__title {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .cert-card__issuer {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  .lang-pills {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .lang-pill {
+    padding: 0.9rem;
+    border-radius: 6px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .lang-pill__code {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 5px;
+    display: inline-grid;
+    place-items: center;
+    background: var(--bg);
+    border: 1px solid var(--rule-strong);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .lang-pill__name {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .lang-pill__lvl {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 0.1rem;
+  }
+</style>

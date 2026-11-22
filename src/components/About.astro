@@ -1,0 +1,323 @@
+---
+/**
+ * Section À propos — Layout inversé (Visuel gauche / Texte court droite) :
+ * - Gauche : Portrait pro 4:5 (mask reveal clip-path) + mini-frise visuelle 3 étapes
+ * - Droite : Citation claire + 2 phrases max + tiroir repliable « Lire mon parcours complet »
+ */
+import { Picture } from 'astro:assets';
+import portraitImg from '../assets/images/Portrait-tiems.png';
+import Icon from './ui/Icon.astro';
+import { type Lang, l, useTranslations } from '../i18n/ui';
+import { aboutQuote, aboutSummary, aboutMilestones, aboutStory } from '../data/about';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const stepDelays = [0, 65, 120];
+---
+
+<section id="about" class="about" aria-labelledby="about-heading">
+  <div class="container">
+    <hr class="rule" data-rule-draw />
+
+    <div class="about__grid">
+      <!-- GAUCHE : Portrait pro + mini-frise visuelle -->
+      <div class="about__visual">
+        <figure class="about__figure">
+          <div class="about__frame" data-wipe-scroll>
+            <div class="about__media-parallax" data-motion-parallax="about-media">
+              <Picture
+                src={portraitImg}
+                formats={['avif', 'webp']}
+                widths={[420, 720, 1024]}
+                sizes="(max-width: 900px) 90vw, 440px"
+                alt={t('hero.portraitAlt')}
+                class="about__photo"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+          <figcaption class="about__caption mono">
+            <span>{profile.route}</span>
+            <span>{l(profile.location, lang)}</span>
+          </figcaption>
+        </figure>
+
+        <!-- Mini-frise visuelle 3 étapes (éventail parallax doux Motion) -->
+        <ol role="list" class="milestones" aria-label={t('about.kicker')}>
+          {
+            aboutMilestones.map((m, idx) => (
+              <li class="milestone-slot" data-motion-parallax="milestone" data-parallax-depth={idx}>
+                <div class="milestone" data-reveal style={`--d:${stepDelays[idx] ?? 120}ms`}>
+                  <span class="milestone__icon">
+                    <Icon name={m.icon} size={16} />
+                  </span>
+                  <div class="milestone__text">
+                    <span class="milestone__period mono">{m.period}</span>
+                    <span class="milestone__title">{l(m.title, lang)}</span>
+                    <span class="milestone__place">{l(m.place, lang)}</span>
+                  </div>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <!-- DROITE : Citation + 2 phrases max + Lire plus repliable -->
+      <div class="about__content-wrap" data-motion-parallax="about-copy">
+      <div class="about__content" data-reveal="right">
+        <p id="about-heading" class="kicker">{t('about.kicker')}</p>
+
+        <blockquote class="about__quote serif-italic">
+          {l(aboutQuote, lang)}
+        </blockquote>
+
+        <p class="about__summary">{l(aboutSummary, lang)}</p>
+
+        <!-- Tiroir « Lire plus » repliable (WAAPI interruptible) -->
+        <div class="about__more">
+          <button
+            type="button"
+            class="about__toggle"
+            aria-expanded="false"
+            aria-controls="about-full-story"
+            data-collapse-trigger
+            data-label-open={t('about.readLess')}
+            data-label-close={t('about.readMore')}
+          >
+            <span data-collapse-label>{t('about.readMore')}</span>
+            <span class="about__toggle-icon" aria-hidden="true"></span>
+          </button>
+
+          <div id="about-full-story" class="about__drawer" hidden>
+            <div class="about__drawer-inner" data-panel-inner>
+              {
+                aboutStory.map((step) => (
+                  <div class="about__chapter">
+                    <p class="about__chapter-tag mono">{l(step.tag, lang)}</p>
+                    <p class="about__chapter-text">{l(step.text, lang)}</p>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    padding-bottom: clamp(4.5rem, 8vw, 8rem);
+  }
+
+  .about__grid {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    padding-top: clamp(2.5rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+  @media (min-width: 920px) {
+    .about__grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .about__visual {
+      grid-column: 1 / 6;
+    }
+    .about__content-wrap {
+      grid-column: 7 / 13;
+    }
+  }
+
+  .about__visual {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .about__frame {
+    background: var(--bg-alt);
+    border: 1px solid var(--rule-strong);
+    border-radius: 6px;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+  }
+  .about__media-parallax {
+    width: 100%;
+    height: 100%;
+    transform-origin: center top;
+  }
+  .about__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 420ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .about__frame:hover .about__photo {
+      transform: scale(1.025);
+    }
+  }
+
+  .about__caption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.65rem;
+    font-size: var(--fs-2xs);
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Mini-frise visuelle 3 jalons */
+  .milestones {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+  @media (max-width: 480px) {
+    .milestones {
+      grid-template-columns: 1fr;
+    }
+  }
+  .milestone-slot {
+    display: grid;
+  }
+  .milestone {
+    padding: 0.8rem 0.75rem;
+    border-radius: 6px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule);
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+  .milestone__icon {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 4px;
+    display: inline-grid;
+    place-items: center;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    color: var(--accent);
+  }
+  .milestone__text {
+    display: grid;
+    gap: 0.1rem;
+  }
+  .milestone__period {
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .milestone__title {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.25;
+  }
+  .milestone__place {
+    font-size: var(--fs-2xs);
+    color: var(--muted);
+  }
+
+  /* Colonne texte courte */
+  .about__content {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+  }
+
+  .about__quote {
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.35rem);
+    line-height: 1.08;
+    color: var(--fg);
+    max-width: 18ch;
+  }
+
+  .about__summary {
+    font-size: var(--fs-lg);
+    line-height: 1.6;
+    color: var(--fg-soft);
+    max-width: 48ch;
+  }
+
+  /* Bouton « Lire plus » repliable */
+  .about__more {
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--rule);
+    max-width: 48ch;
+  }
+
+  .about__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 0.65rem;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--accent);
+    transition: opacity var(--dur-fast) ease, transform var(--dur-press) var(--ease-out);
+  }
+  .about__toggle:active {
+    transform: scale(0.98);
+  }
+  .about__toggle-icon {
+    position: relative;
+    width: 0.85rem;
+    height: 0.85rem;
+    flex-shrink: 0;
+  }
+  .about__toggle-icon::before,
+  .about__toggle-icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform var(--dur-ui) var(--ease-out);
+  }
+  .about__toggle-icon::after {
+    transform: rotate(90deg);
+  }
+  .about__toggle[aria-expanded='true'] .about__toggle-icon::after {
+    transform: rotate(0deg);
+  }
+
+  .about__drawer {
+    overflow: hidden;
+  }
+  .about__drawer-inner {
+    display: grid;
+    gap: 1.15rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.5rem;
+  }
+  .about__chapter {
+    display: grid;
+    gap: 0.3rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--rule-strong);
+  }
+  .about__chapter-tag {
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+  .about__chapter-text {
+    font-size: var(--fs-sm);
+    line-height: 1.62;
+    color: var(--fg-soft);
+  }
+</style>

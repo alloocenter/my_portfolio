@@ -1,0 +1,24 @@
+# Build & dépendances
+dist/
+.astro/
+node_modules/
+
+# Environnement
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+
+# Ancien site (archive locale — supprimable)
+_legacy/
+
+.agents/

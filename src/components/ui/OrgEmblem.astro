@@ -1,0 +1,57 @@
+---
+/**
+ * Emblèmes vectoriels sobres (style éditorial suisse) pour les organisations
+ * et les badges de certifications, sans dépendre de logos bitmap hétérogènes.
+ */
+import type { CompanyLogoId } from '../../data/experience';
+import type { CertBadgeId } from '../../data/education';
+
+interface Props {
+  kind: CompanyLogoId | CertBadgeId;
+}
+const { kind } = Astro.props;
+
+const labels: Record<CompanyLogoId | CertBadgeId, { code: string; accent?: boolean }> = {
+  mediasoft: { code: 'ML', accent: true },
+  alloocenter: { code: 'AC' },
+  odc: { code: 'ODC', accent: true },
+  douane: { code: 'DM' },
+  aws: { code: 'AWS', accent: true },
+  ibm: { code: 'IBM' },
+  owasp: { code: 'SEC' },
+};
+
+const meta = labels[kind];
+---
+
+<span class:list={['emblem', meta.accent && 'emblem--accent', `emblem--${kind}`]} aria-hidden="true">
+  <span class="emblem__code mono">{meta.code}</span>
+</span>
+
+<style>
+  .emblem {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    border-radius: 6px;
+    background: var(--bg-alt);
+    border: 1px solid var(--rule-strong);
+    color: var(--fg);
+  }
+  .emblem--accent {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .emblem--odc {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .emblem__code {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+</style>

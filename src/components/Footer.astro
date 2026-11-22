@@ -1,0 +1,61 @@
+---
+/**
+ * Footer — Une seule ligne éditoriale nette, heure locale d'Abidjan en direct.
+ */
+import { type Lang, useTranslations } from '../i18n/ui';
+import { profile } from '../data/profile';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="colophon">
+  <div class="colophon__inner container mono">
+    <p>© {year} {profile.name}</p>
+
+    <p class="colophon__time">
+      <span>{t('footer.time')} ·</span>
+      <time data-abidjan-time>--:-- GMT</time>
+    </p>
+
+    <a class="colophon__top" href="#top" data-scroll-top>
+      {t('footer.top')} ↑
+    </a>
+  </div>
+</footer>
+
+<style>
+  .colophon {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.5rem;
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .colophon__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    font-size: var(--fs-xs);
+    color: var(--muted);
+  }
+
+  .colophon__time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .colophon__top {
+    color: var(--fg);
+    transition: color var(--dur-fast) ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .colophon__top:hover {
+      color: var(--accent);
+    }
+  }
+</style>

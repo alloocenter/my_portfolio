@@ -1,0 +1,37 @@
+---
+/**
+ * Page d'accueil — Rythme visuel varié :
+ * Papier (Hero couverture) → Papier (Trajectoire sticky) → ENCRE NOIRE (Projets)
+ * → Papier (Tableau Atelier) → Papier (Split asymétrique Parcours/Cursus) → Papier (Contact monumental).
+ */
+import Base from '../layouts/Base.astro';
+import Header from './Header.astro';
+import Hero from './Hero.astro';
+import About from './About.astro';
+import Work from './Work.astro';
+import Skills from './Skills.astro';
+import Career from './Career.astro';
+import Contact from './Contact.astro';
+import Footer from './Footer.astro';
+import { type Lang, useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<Base lang={lang}>
+  <a class="skip-link" href="#main">{t('skip')}</a>
+  <Header lang={lang} />
+  <main id="main" tabindex="-1">
+    <Hero lang={lang} />
+    <About lang={lang} />
+    <Work lang={lang} />
+    <Skills lang={lang} />
+    <Career lang={lang} />
+    <Contact lang={lang} />
+  </main>
+  <Footer lang={lang} />
+</Base>

@@ -1,0 +1,380 @@
+---
+/**
+ * Visuel dominant du Hero (Option A) :
+ * Composition Web + Mobile illustrant la polyvalence multi-secteurs
+ * (outils métier, e-commerce, mobile, avec point fort FinTech),
+ * immédiatement compréhensible par tout recruteur non-technique.
+ */
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+---
+
+<div class="hmock" aria-hidden="true">
+  <!-- Fenêtre Web principale (profondeur 3D Motion) -->
+  <div class="hmock__web" data-motion-parallax="hero-web">
+    <div class="hmock__bar">
+      <div class="hmock__dots">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="hmock__url mono">
+        {fr ? 'workspace-apps.dev' : 'workspace-apps.dev'}
+      </span>
+      <span class="hmock__live mono">
+        <span class="hmock__pulse"></span>
+        {fr ? 'En production' : 'In production'}
+      </span>
+    </div>
+
+    <div class="hmock__body">
+      <div class="hmock__head">
+        <div>
+          <p class="hmock__eyebrow mono">{fr ? 'APPLICATIONS SUR-MESURE' : 'TAILORED APPLICATIONS'}</p>
+          <p class="hmock__title">{fr ? 'Web, Mobile & Outils métier' : 'Web, Mobile & Business Tools'}</p>
+        </div>
+        <span class="hmock__badge mono">Web · Mobile</span>
+      </div>
+
+      <!-- 3 mini-indicateurs montrant la polyvalence -->
+      <div class="hmock__kpis">
+        <div class="hmock__kpi">
+          <span class="hmock__kpi-val">5+</span>
+          <span class="hmock__kpi-lbl">{fr ? 'Secteurs couverts' : 'Industries'}</span>
+        </div>
+        <div class="hmock__kpi">
+          <span class="hmock__kpi-val">Web / iOS</span>
+          <span class="hmock__kpi-lbl">{fr ? 'Multi-écrans' : 'Cross-platform'}</span>
+        </div>
+        <div class="hmock__kpi hmock__kpi--accent">
+          <span class="hmock__kpi-val">FinTech</span>
+          <span class="hmock__kpi-lbl">{fr ? 'Point fort ★' : 'Core edge ★'}</span>
+        </div>
+      </div>
+
+      <!-- Courbe d'activité propre -->
+      <div class="hmock__chart">
+        <svg viewBox="0 0 360 88" fill="none" xmlns="http://www.w3.org/2000/svg" class="hmock__svg">
+          <defs>
+            <linearGradient id="hmock-grad" x1="0" y1="0" x2="0" y2="88" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#f08080" stop-opacity="0.34" />
+              <stop offset="100%" stop-color="#f08080" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="22" x2="360" y2="22" stroke="rgba(248,242,241,0.08)" stroke-dasharray="3 3" />
+          <line x1="0" y1="54" x2="360" y2="54" stroke="rgba(248,242,241,0.08)" stroke-dasharray="3 3" />
+          <path
+            d="M 4 70 C 44 66, 62 46, 102 48 C 142 50, 166 26, 208 30 C 248 34, 276 14, 316 18 C 334 20, 346 12, 356 10 L 356 86 L 4 86 Z"
+            fill="url(#hmock-grad)"
+          />
+          <path
+            d="M 4 70 C 44 66, 62 46, 102 48 C 142 50, 166 26, 208 30 C 248 34, 276 14, 316 18 C 334 20, 346 12, 356 10"
+            stroke="#f08080"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <circle cx="356" cy="10" r="4" fill="#f08080" />
+          <circle cx="356" cy="10" r="8" fill="#f08080" fill-opacity="0.24" />
+        </svg>
+      </div>
+
+      <!-- 3 types d'applications livrées : polyvalence + atout FinTech -->
+      <ul role="list" class="hmock__rows">
+        <li class="hmock__row">
+          <span class="hmock__check">✓</span>
+          <span class="hmock__row-main">{fr ? 'Portails métier, RH & CRM' : 'Business portals, HR & CRM'}</span>
+          <span class="hmock__row-state mono">{fr ? 'Web' : 'Web'}</span>
+        </li>
+        <li class="hmock__row">
+          <span class="hmock__check">✓</span>
+          <span class="hmock__row-main">{fr ? 'E-commerce, stocks & livraison' : 'E-commerce, stock & delivery'}</span>
+          <span class="hmock__row-state mono">{fr ? 'Temps réel' : 'Real-time'}</span>
+        </li>
+        <li class="hmock__row">
+          <span class="hmock__check">✓</span>
+          <span class="hmock__row-main">{fr ? 'Paiements & échanges sécurisés' : 'Payments & secure exchanges'}</span>
+          <span class="hmock__row-state mono">{fr ? 'FinTech ★' : 'FinTech ★'}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Carte Mobile flottante (plan avant rapide Motion — vraie profondeur 2 plans) -->
+  <div class="hmock__phone" data-motion-parallax="hero-phone">
+    <div class="hmock__notch"></div>
+    <div class="hmock__phone-icon">✓</div>
+    <p class="hmock__phone-title">{fr ? 'App sur-mesure' : 'Tailored apps'}</p>
+    <p class="hmock__phone-sub">{fr ? 'Rapide, claire et fiable' : 'Fast, clear & reliable'}</p>
+    <div class="hmock__phone-bar">
+      <span></span>
+    </div>
+    <p class="hmock__phone-meta mono">WEB · iOS · ANDROID</p>
+  </div>
+</div>
+
+<style>
+  .hmock {
+    position: relative;
+    padding-bottom: 1.75rem;
+    padding-right: clamp(0rem, 2vw, 1.5rem);
+  }
+
+  .hmock__web {
+    background: #141311;
+    color: #efeae0;
+    border: 1px solid var(--rule-strong);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow:
+      0 22px 48px -26px rgb(20 19 17 / 0.35),
+      0 2px 8px rgb(20 19 17 / 0.12);
+  }
+  :global([data-theme='dark']) .hmock__web {
+    background: #1a1815;
+    border-color: rgb(239 234 224 / 0.2);
+    box-shadow: 0 24px 56px -24px rgb(0 0 0 / 0.65);
+  }
+
+  .hmock__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0.95rem;
+    background: #1d1b18;
+    border-bottom: 1px solid rgb(239 234 224 / 0.1);
+  }
+  .hmock__dots {
+    display: flex;
+    gap: 0.32rem;
+  }
+  .hmock__dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgb(239 234 224 / 0.22);
+  }
+  .hmock__dots span:first-child {
+    background: #f08080;
+  }
+  .hmock__url {
+    font-size: 0.66rem;
+    color: #9e968a;
+    letter-spacing: 0.04em;
+  }
+  .hmock__live {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8fd19e;
+  }
+  .hmock__pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #67c587;
+    box-shadow: 0 0 0 3px rgb(103 197 135 / 0.22);
+  }
+
+  .hmock__body {
+    padding: clamp(1rem, 2.2vw, 1.4rem);
+    display: grid;
+    gap: 0.95rem;
+  }
+
+  .hmock__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .hmock__eyebrow {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: #9e968a;
+  }
+  .hmock__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #efeae0;
+    margin-top: 0.12rem;
+  }
+  .hmock__badge {
+    padding: 0.24rem 0.55rem;
+    border-radius: 999px;
+    background: rgb(103 197 135 / 0.14);
+    border: 1px solid rgb(103 197 135 / 0.35);
+    color: #9be2b1;
+    font-size: 0.66rem;
+    white-space: nowrap;
+  }
+
+  .hmock__kpis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+  .hmock__kpi {
+    padding: 0.6rem 0.7rem;
+    border-radius: 4px;
+    background: #1d1b18;
+    border: 1px solid rgb(239 234 224 / 0.1);
+    display: grid;
+    gap: 0.1rem;
+  }
+  .hmock__kpi--accent {
+    border-color: rgb(240 128 128 / 0.48);
+  }
+  .hmock__kpi-val {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #f8f2f1;
+    line-height: 1.1;
+  }
+  .hmock__kpi--accent .hmock__kpi-val {
+    color: #f08080;
+  }
+  .hmock__kpi-lbl {
+    font-size: 0.68rem;
+    color: #9e968a;
+    line-height: 1.2;
+  }
+
+  .hmock__chart {
+    padding: 0.55rem 0.65rem 0.25rem;
+    border-radius: 4px;
+    background: #1a1815;
+    border: 1px solid rgb(239 234 224 / 0.08);
+  }
+  .hmock__svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .hmock__rows {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .hmock__row {
+    display: grid;
+    grid-template-columns: 1.15rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.48rem 0.65rem;
+    border-radius: 4px;
+    background: rgb(239 234 224 / 0.04);
+    border: 1px solid rgb(239 234 224 / 0.07);
+    font-size: 0.76rem;
+  }
+  .hmock__check {
+    display: inline-grid;
+    place-items: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 999px;
+    background: rgb(240 128 128 / 0.18);
+    color: #f08080;
+    font-size: 0.65rem;
+    font-weight: 700;
+  }
+  .hmock__row-main {
+    min-width: 0;
+    color: #efeae0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hmock__row-state {
+    font-size: 0.64rem;
+    color: #9be2b1;
+  }
+
+  /* Écran mobile superposé en bas à droite */
+  .hmock__phone {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: clamp(9.75rem, 32%, 11.75rem);
+    padding: 0.75rem 0.85rem 0.85rem;
+    border-radius: 14px;
+    background: #fbf7f6;
+    color: #141311;
+    border: 2px solid #141311;
+    box-shadow: 0 18px 34px -12px rgb(20 19 17 / 0.45);
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 0.28rem;
+  }
+  :global([data-theme='dark']) .hmock__phone {
+    background: #231d1d;
+    color: #fbf7f6;
+    border-color: rgb(248 242 241 / 0.28);
+  }
+  .hmock__notch {
+    width: 2.2rem;
+    height: 4px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.2;
+    margin-bottom: 0.25rem;
+  }
+  .hmock__phone-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: var(--brand);
+    color: var(--on-brand);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  .hmock__phone-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-top: 0.1rem;
+  }
+  .hmock__phone-sub {
+    font-size: 0.66rem;
+    color: var(--muted);
+    line-height: 1.25;
+  }
+  .hmock__phone-bar {
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--rule);
+    overflow: hidden;
+    margin-top: 0.25rem;
+  }
+  .hmock__phone-bar span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--brand);
+  }
+  .hmock__phone-meta {
+    font-size: 0.56rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  @media (max-width: 520px) {
+    .hmock {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+    .hmock__phone {
+      display: none;
+    }
+  }
+</style>
